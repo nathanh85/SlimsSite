@@ -8,6 +8,8 @@
 <meta name="apple-mobile-web-app-title" content="Slim">
 <meta name="theme-color" content="#1a1a0f">
 <title>Slim 🐢</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon.png">
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
 <style>
 :root{--amber:#c87d1a;--amber-light:#f0a83a;--cream:#fdf6e8;--leaf:#4a7c3f;--leaf-light:#7ab56d;--red:#c04020;--bg:#1a1a0f;--bg2:#222213;--bg3:#2c2c18;--bg4:#343420;--text:#f0ead8;--text-muted:#a09880;--text-dim:#6a6450;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);--r:14px;--safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px);}
@@ -67,8 +69,7 @@ strong{color:var(--text);font-weight:500;}
 .temp-val{font-size:12px;font-weight:500;color:var(--amber-light);width:55px;text-align:right;flex-shrink:0;}
 .section-label{font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.08em;margin:15px 0 9px;font-weight:500;}
 .food-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
-.fp{border-radius:11px;padding:11px 8px;text-align:center;font-size:12px;font-weight:500;line-height:1.3;cursor:pointer;transition:transform 0.15s;user-select:none;}
-.fp:active{transform:scale(0.94);}
+
 .fp .fsub{font-size:10px;font-weight:400;margin-top:3px;opacity:0.75;}
 .fp-yes{background:rgba(74,124,63,0.2);color:#7ab56d;}
 .fp-no{background:rgba(192,64,32,0.2);color:#e07060;}
@@ -100,9 +101,12 @@ strong{color:var(--text);font-weight:500;}
 hr{border:none;border-top:1px solid var(--border);margin:13px 0;}
 #overlay{display:none;position:fixed;inset:0;z-index:400;}
 #overlay.on{display:block;}
-#ftip{display:none;position:fixed;z-index:500;background:var(--bg4);border:1px solid var(--border2);border-radius:13px;padding:13px 15px;font-size:13px;color:var(--text-muted);max-width:250px;line-height:1.55;box-shadow:0 14px 40px rgba(0,0,0,0.65);}
-#ftip.on{display:block;}
+#ftip{display:none;position:fixed;z-index:500;background:var(--bg4);border:1px solid var(--border2);border-radius:13px;padding:13px 15px;font-size:13px;color:var(--text-muted);max-width:260px;line-height:1.6;box-shadow:0 14px 40px rgba(0,0,0,0.7);}
+#ftip.on{display:block;animation:tipIn 0.15s ease;}
+@keyframes tipIn{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
 #ftip .tc{display:block;margin-top:9px;font-size:11px;color:var(--amber);text-align:right;}
+.fp{border-radius:11px;padding:11px 8px;text-align:center;font-size:12px;font-weight:500;line-height:1.3;cursor:pointer;transition:transform 0.15s,box-shadow 0.15s;user-select:none;}
+.fp:active{transform:scale(0.93);}
 </style>
 </head>
 <body>
@@ -202,7 +206,7 @@ hr{border:none;border-top:1px solid var(--border);margin:13px 0;}
       <p>Red-footed tortoises are <span class="tip-trigger" onclick="tt(this,'Unlike most tortoise species which are strict herbivores, red-foots evolved in tropical South American forests where they eat fallen fruits, mushrooms, carrion, and invertebrates alongside greens. This makes them more flexible and fun to feed.')">omnivores</span>. Target roughly <strong>70% leafy greens &amp; vegetables, 20% fruits, 10% protein</strong>. Variety across the week matters more than perfection on any given day.</p>
       <p>As a hatchling, Slim should eat <strong>every day</strong>. Adults eat every other day.</p>
     </div>
-    <p class="section-label">✅ Staple foods — tap for details</p>
+    <p class="section-label" style="color:#7ab56d;">✅ Staple foods — tap any for details</p>
     <div class="food-grid">
       <div class="fp fp-yes" onclick="ft(this,'Collard greens','Excellent calcium-to-phosphorus ratio. One of the best staple greens available. Found year-round at most grocery stores.')">Collard greens<div class="fsub">Staple</div></div>
       <div class="fp fp-yes" onclick="ft(this,'Mustard greens','High in vitamins A and C. Slightly peppery — most red-foots enjoy it. Rotate with other greens throughout the week.')">Mustard greens<div class="fsub">Staple</div></div>
@@ -211,7 +215,7 @@ hr{border:none;border-top:1px solid var(--border);margin:13px 0;}
       <div class="fp fp-yes" onclick="ft(this,'Butternut squash','Excellent vitamin A and beta-carotene — important for eye health and immune function. Offer raw or lightly cooked with no seasoning.')">Butternut squash<div class="fsub">Great</div></div>
       <div class="fp fp-yes" onclick="ft(this,'Hibiscus','Red-foots are absolutely obsessed with hibiscus. Flowers and leaves are both safe and nutritious. Try hand-feeding the flowers — great for bonding.')">Hibiscus<div class="fsub">Loves it ❤️</div></div>
     </div>
-    <p class="section-label">⚠️ Treats — 2–3 times per week max</p>
+    <p class="section-label" style="color:#d49040;">⚠️ Treats — tap any for details</p>
     <div class="food-grid">
       <div class="fp fp-sometimes" onclick="ft(this,'Strawberries','High in vitamin C and natural sugars. Red-foots love them. Limit to 2× per week — too much fruit causes digestive upset and bacterial overgrowth in the gut.')">Strawberries<div class="fsub">2× per week</div></div>
       <div class="fp fp-sometimes" onclick="ft(this,'Mango','Rich in vitamin A and beta-carotene. Remove skin and pit before offering. Excellent treat but high in sugar — keep it occasional.')">Mango<div class="fsub">Occasional</div></div>
@@ -220,7 +224,7 @@ hr{border:none;border-top:1px solid var(--border);margin:13px 0;}
       <div class="fp fp-sometimes" onclick="ft(this,'Mushrooms','Wild-caught or store-bought non-toxic mushrooms are a natural red-foot food. High in nutrients. Only offer varieties you can positively identify as safe.')">Mushrooms<div class="fsub">Occasional</div></div>
       <div class="fp fp-sometimes" onclick="ft(this,'Watermelon','Very high water content — great for hydration. Remove seeds. High sugar so offer as a treat only. Most tortoises love the red flesh.')">Watermelon<div class="fsub">Hydrating treat</div></div>
     </div>
-    <p class="section-label">🚫 Never feed these</p>
+    <p class="section-label" style="color:#e07060;">🚫 Never feed these — tap to see why</p>
     <div class="food-grid">
       <div class="fp fp-no" onclick="ft(this,'Spinach','Contains high oxalates which bind calcium and prevent absorption — even when you\'re supplementing. Regular feeding causes MBD even with good UVB.')">Spinach<div class="fsub">Oxalates</div></div>
       <div class="fp fp-no" onclick="ft(this,'Citrus','Too acidic for a tortoise\'s digestive system. Causes stomach upset and diarrhea. Includes oranges, lemons, limes, and grapefruit.')">Citrus<div class="fsub">Too acidic</div></div>
