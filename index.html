@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Slim">
+<meta name="theme-color" content="#1a1a0f">
+<title>Slim 🐢</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+:root{--amber:#c87d1a;--amber-light:#f0a83a;--cream:#fdf6e8;--leaf:#4a7c3f;--leaf-light:#7ab56d;--red:#c04020;--bg:#1a1a0f;--bg2:#222213;--bg3:#2c2c18;--bg4:#343420;--text:#f0ead8;--text-muted:#a09880;--text-dim:#6a6450;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);--r:14px;--safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px);}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{background:var(--bg);overscroll-behavior:none;}
+body{font-family:'DM Sans',sans-serif;font-size:15px;line-height:1.6;color:var(--text);background:var(--bg);min-height:100vh;overflow-x:hidden;}
+.header{background:linear-gradient(180deg,#0a0a05 0%,var(--bg) 100%);padding:calc(var(--safe-top) + 28px) 20px 22px;text-align:center;position:relative;overflow:hidden;}
+.header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% -10%,rgba(200,125,26,0.2) 0%,transparent 65%);pointer-events:none;}
+.header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(200,125,26,0.3),transparent);}
+.tort-icon{font-size:58px;display:block;margin-bottom:10px;filter:drop-shadow(0 6px 20px rgba(200,125,26,0.5));animation:float 5s ease-in-out infinite;position:relative;z-index:1;}
+@keyframes float{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-8px) rotate(2deg)}}
+.header h1{font-family:'Lora',serif;font-size:38px;font-weight:600;color:var(--cream);letter-spacing:-0.5px;position:relative;z-index:1;}
+.header .sub{font-size:13px;color:var(--text-muted);font-style:italic;margin-top:3px;position:relative;z-index:1;}
+.header-tags{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:14px;position:relative;z-index:1;}
+.htag{font-size:11px;padding:4px 11px;border-radius:99px;border:1px solid rgba(200,125,26,0.3);color:var(--amber-light);background:rgba(200,125,26,0.1);font-weight:500;}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.stat{background:var(--bg2);padding:14px 6px;text-align:center;cursor:pointer;transition:background 0.15s;position:relative;}
+.stat:active{background:var(--bg3);}
+.stat-val{font-family:'Lora',serif;font-size:15px;font-weight:600;color:var(--amber-light);line-height:1.2;}
+.stat-lbl{font-size:10px;color:var(--text-dim);margin-top:2px;text-transform:uppercase;letter-spacing:0.05em;}
+.nav-wrap{position:sticky;top:0;z-index:100;background:var(--bg2);border-bottom:1px solid var(--border);}
+.nav-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.nav-scroll::-webkit-scrollbar{display:none;}
+.nav{display:flex;padding:0 12px;min-width:max-content;}
+.nav-btn{padding:13px 16px;font-size:13px;font-weight:500;color:var(--text-dim);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap;font-family:'DM Sans',sans-serif;transition:color 0.2s,border-color 0.2s;}
+.nav-btn.active{color:var(--amber-light);border-bottom-color:var(--amber);}
+.dot-nav{display:flex;justify-content:center;gap:6px;padding:8px 0 6px;}
+.dot-nav span{width:5px;height:5px;border-radius:50%;background:var(--bg4);transition:background 0.2s,transform 0.2s;}
+.dot-nav span.active{background:var(--amber);transform:scale(1.3);}
+.content{padding:18px 15px calc(var(--safe-bottom) + 24px);max-width:600px;margin:0 auto;}
+.panel{display:none;animation:fadeIn 0.22s ease;}
+.panel.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:15px;margin-bottom:11px;}
+.card-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.card-icon{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.ia{background:rgba(200,125,26,0.2);}
+.il{background:rgba(74,124,63,0.2);}
+.ir{background:rgba(192,64,32,0.2);}
+.ib{background:rgba(40,100,180,0.2);}
+.ip{background:rgba(120,80,180,0.2);}
+.card-title{font-family:'Lora',serif;font-size:15px;font-weight:600;color:var(--cream);}
+.card p{font-size:13.5px;color:var(--text-muted);line-height:1.7;}
+.card p+p{margin-top:9px;}
+strong{color:var(--text);font-weight:500;}
+.tip-trigger{border-bottom:1px dashed rgba(200,125,26,0.45);color:var(--amber-light);cursor:pointer;}
+.hatch-banner{background:linear-gradient(135deg,rgba(200,125,26,0.12),rgba(192,64,32,0.08));border:1px solid rgba(200,125,26,0.2);border-radius:var(--r);padding:15px;margin-bottom:11px;display:flex;gap:12px;align-items:flex-start;}
+.hatch-emoji{font-size:28px;flex-shrink:0;line-height:1;}
+.hatch-text h3{font-family:'Lora',serif;font-size:14px;color:var(--amber-light);margin-bottom:5px;}
+.hatch-text p{font-size:13px;color:var(--text-muted);line-height:1.55;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:11px;}
+.two-col .card{margin-bottom:0;}
+.temp-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.temp-name{font-size:12px;color:var(--text-muted);width:82px;flex-shrink:0;}
+.temp-track{flex:1;height:9px;background:var(--bg3);border-radius:99px;overflow:hidden;}
+.temp-fill{height:100%;border-radius:99px;width:0;transition:width 0.9s cubic-bezier(.4,0,.2,1);}
+.temp-val{font-size:12px;font-weight:500;color:var(--amber-light);width:55px;text-align:right;flex-shrink:0;}
+.section-label{font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.08em;margin:15px 0 9px;font-weight:500;}
+.food-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.fp{border-radius:11px;padding:11px 8px;text-align:center;font-size:12px;font-weight:500;line-height:1.3;cursor:pointer;transition:transform 0.15s;user-select:none;}
+.fp:active{transform:scale(0.94);}
+.fp .fsub{font-size:10px;font-weight:400;margin-top:3px;opacity:0.75;}
+.fp-yes{background:rgba(74,124,63,0.2);color:#7ab56d;}
+.fp-no{background:rgba(192,64,32,0.2);color:#e07060;}
+.fp-sometimes{background:rgba(200,125,26,0.15);color:#d49040;}
+.checklist{list-style:none;}
+.checklist li{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--border);font-size:13.5px;color:var(--text-muted);line-height:1.5;}
+.checklist li:last-child{border-bottom:none;padding-bottom:0;}
+.dot{width:19px;height:19px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:1px;font-size:11px;font-weight:600;}
+.dot-ok{background:rgba(74,124,63,0.25);color:#7ab56d;}
+.dot-ok::after{content:'✓';}
+.dot-warn{background:rgba(200,125,26,0.2);color:var(--amber);}
+.dot-warn::after{content:'!';}
+.sched-item{display:flex;gap:14px;padding:10px 0;border-bottom:1px solid var(--border);align-items:flex-start;}
+.sched-item:last-child{border-bottom:none;}
+.sched-time{font-size:12px;font-weight:500;color:var(--amber);width:72px;flex-shrink:0;padding-top:2px;}
+.sched-desc{font-size:13.5px;color:var(--text-muted);line-height:1.55;}
+.alert{border-radius:11px;padding:12px 14px;font-size:13px;line-height:1.55;margin-bottom:11px;border-left:3px solid;}
+.alert-a{background:rgba(200,125,26,0.1);border-color:var(--amber);color:#d49040;}
+.alert-l{background:rgba(74,124,63,0.1);border-color:var(--leaf);color:var(--leaf-light);}
+.alert-b{background:rgba(40,100,180,0.1);border-color:#2864b4;color:#6aabf0;}
+.fact-card{background:var(--bg3);border-radius:11px;padding:13px;margin-bottom:9px;border-left:3px solid var(--amber);}
+.fact-card p{font-size:13.5px;color:var(--text-muted);line-height:1.65;}
+.gs{display:flex;align-items:center;gap:10px;margin-bottom:10px;cursor:pointer;}
+.gs-label{font-size:12px;color:var(--text-muted);width:90px;flex-shrink:0;}
+.gs-track{flex:1;height:10px;background:var(--bg3);border-radius:99px;overflow:hidden;position:relative;}
+.gs-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--amber),var(--amber-light));}
+.gs-now{position:absolute;top:50%;transform:translateY(-50%);width:13px;height:13px;background:white;border-radius:50%;border:2px solid var(--amber);margin-left:-6px;box-shadow:0 0 8px rgba(200,125,26,0.7);}
+.gs-size{font-size:12px;color:var(--amber-light);font-weight:500;width:40px;text-align:right;flex-shrink:0;}
+hr{border:none;border-top:1px solid var(--border);margin:13px 0;}
+#overlay{display:none;position:fixed;inset:0;z-index:400;}
+#overlay.on{display:block;}
+#ftip{display:none;position:fixed;z-index:500;background:var(--bg4);border:1px solid var(--border2);border-radius:13px;padding:13px 15px;font-size:13px;color:var(--text-muted);max-width:250px;line-height:1.55;box-shadow:0 14px 40px rgba(0,0,0,0.65);}
+#ftip.on{display:block;}
+#ftip .tc{display:block;margin-top:9px;font-size:11px;color:var(--amber);text-align:right;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <span class="tort-icon">🐢</span>
+  <h1>Slim</h1>
+  <p class="sub">Red-footed tortoise &nbsp;·&nbsp; <em>Chelonoidis carbonaria</em></p>
+  <div class="header-tags">
+    <span class="htag">Born ~Dec 2025</span>
+    <span class="htag">South American</span>
+    <span class="htag">50–90 yr lifespan</span>
+  </div>
+</div>
+
+<div class="stats-row">
+  <div class="stat" onclick="st(this,'Adults reach 10–16 inches and up to 20 lbs. As a hatchling, Slim is likely 2–3 inches right now.')">
+    <div class="stat-val">10–16″</div><div class="stat-lbl">Adult size</div>
+  </div>
+  <div class="stat" onclick="st(this,'60–80% is the range. Hatchlings need the higher end — aim for 75–80%. Always verify with a digital hygrometer.')">
+    <div class="stat-val">60–80%</div><div class="stat-lbl">Humidity</div>
+  </div>
+  <div class="stat" onclick="st(this,'The basking spot should hit 90–95°F. Cool side stays 70–75°F. Tortoises self-regulate by moving between zones all day.')">
+    <div class="stat-val">90–95°</div><div class="stat-lbl">Basking</div>
+  </div>
+  <div class="stat" onclick="st(this,'Red-foots commonly live 50–90 years. Slim will very likely outlive most pets. Plan accordingly — he needs a long-term caretaker plan.')">
+    <div class="stat-val">50+ yrs</div><div class="stat-lbl">Lifespan</div>
+  </div>
+</div>
+
+<div class="nav-wrap">
+  <div class="nav-scroll">
+    <nav class="nav" id="nav">
+      <button class="nav-btn active" onclick="go(0,this)">🏠 Habitat</button>
+      <button class="nav-btn" onclick="go(1,this)">🥬 Feeding</button>
+      <button class="nav-btn" onclick="go(2,this)">❤️ Health</button>
+      <button class="nav-btn" onclick="go(3,this)">📅 Schedule</button>
+      <button class="nav-btn" onclick="go(4,this)">📏 Growth</button>
+      <button class="nav-btn" onclick="go(5,this)">✨ Slim</button>
+    </nav>
+  </div>
+  <div class="dot-nav" id="dn">
+    <span class="active"></span><span></span><span></span><span></span><span></span><span></span>
+  </div>
+</div>
+
+<div class="content" id="ct">
+
+  <!-- HABITAT -->
+  <div class="panel active" id="p0">
+    <div class="hatch-banner">
+      <div class="hatch-emoji">🥚</div>
+      <div class="hatch-text">
+        <h3>Hatchling mode — born ~Dec 2025</h3>
+        <p>Slim is ~3 months old. Humidity and hydration matter more now than any other stage — hatchlings are highly prone to dehydration and <span class="tip-trigger" onclick="tt(this,'Shell pyramiding is when each scute grows raised and bumpy instead of smooth and flat. It\'s caused almost entirely by low humidity during the first 2–3 years. Once it develops it cannot be reversed — prevention is everything.')">pyramiding</span>.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-icon ia">📦</div><div class="card-title">Enclosure size</div></div>
+      <p>Current setup is fine for the first year, but plan ahead. Adults need <strong>minimum 4×8 ft</strong>. Red-foots roam large home ranges in the wild — space matters for their mental and physical health.</p>
+      <p>Wooden tortoise tables and large stock tanks work well. Avoid glass tanks — they don't hold humidity and can cause stress from reflections.</p>
+    </div>
+    <div class="two-col">
+      <div class="card">
+        <div class="card-header"><div class="card-icon il">🌱</div><div class="card-title">Substrate</div></div>
+        <p>Use <strong>6+ inches</strong> of <span class="tip-trigger" onclick="tt(this,'Cypress mulch, coconut coir, and organic (unfertilized) topsoil are all excellent. A 50/50 coir + topsoil mix holds moisture beautifully. Avoid sand, gravel, or reptile carpet.')">moisture-retaining mix</span>. Damp enough to hold a clump when squeezed, not wet.</p>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-icon ia">🪵</div><div class="card-title">Hides</div></div>
+        <p>Minimum <strong>2 hides</strong> — warm side and cool side. Cork bark logs are ideal. A snug hide feels more secure than an oversized one.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-icon ia">🌡️</div><div class="card-title">Temperature gradient</div></div>
+      <p style="margin-bottom:12px;font-size:13px;">Slim is an <span class="tip-trigger" onclick="tt(this,'Ectotherms (cold-blooded animals) rely entirely on their environment to regulate body temperature. They move between warm and cool zones throughout the day to digest food, fight illness, and stay healthy. A proper gradient is not optional.')">ectotherm</span> — he self-regulates by moving between zones. The gradient is essential.</p>
+      <div class="temp-row"><span class="temp-name">Basking spot</span><div class="temp-track"><div class="temp-fill" id="tf1" style="background:#c04020;"></div></div><span class="temp-val">90–95°F</span></div>
+      <div class="temp-row"><span class="temp-name">Warm side</span><div class="temp-track"><div class="temp-fill" id="tf2" style="background:#c87d1a;"></div></div><span class="temp-val">80–85°F</span></div>
+      <div class="temp-row"><span class="temp-name">Cool side</span><div class="temp-track"><div class="temp-fill" id="tf3" style="background:#2864b4;"></div></div><span class="temp-val">70–75°F</span></div>
+      <div class="temp-row"><span class="temp-name">Night min</span><div class="temp-track"><div class="temp-fill" id="tf4" style="background:#3a5a8a;"></div></div><span class="temp-val">65°F+</span></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-icon ib">☀️</div><div class="card-title">Lighting</div></div>
+      <p><span class="tip-trigger" onclick="tt(this,'UVB radiation triggers vitamin D3 synthesis in the skin, which is required for calcium absorption. Without it, tortoises cannot use calcium regardless of how much you supplement. A T5 HO 10.0 bulb provides the correct UV index for tropical species like red-foots.')">UVB lighting</span> is non-negotiable. Use a <strong>T5 HO 10.0 bulb</strong> on a timer for 10–12 hours/day, positioned 12–18 inches from the basking area.</p>
+      <p>Use a <strong>separate halogen bulb</strong> for basking heat. Replace UVB every <strong>6–12 months</strong> — UV output degrades long before the bulb burns out visually.</p>
+    </div>
+    <div class="alert alert-a">💧 Target 75–80% humidity right now. Mist substrate daily and verify with a <span class="tip-trigger" onclick="tt(this,'A cheap digital thermometer/hygrometer combo from Amazon works great. Analog dial gauges are notoriously inaccurate — avoid them. Place it at substrate level on the cool side for the most representative reading.')">digital hygrometer</span>. This is the single most important variable for hatchling health.</div>
+    <div class="card">
+      <div class="card-header"><div class="card-icon ip">🌿</div><div class="card-title">Live plants</div></div>
+      <p>Adding live plants boosts humidity, provides enrichment, and lets Slim graze naturally. Great options: <strong>pothos, hibiscus, spider plants, and wandering jew</strong>. Always verify a plant is non-toxic before adding. They also make the enclosure dramatically more beautiful.</p>
+    </div>
+  </div>
+
+  <!-- FEEDING -->
+  <div class="panel" id="p1">
+    <div class="card">
+      <div class="card-header"><div class="card-icon il">🌿</div><div class="card-title">Diet overview</div></div>
+      <p>Red-footed tortoises are <span class="tip-trigger" onclick="tt(this,'Unlike most tortoise species which are strict herbivores, red-foots evolved in tropical South American forests where they eat fallen fruits, mushrooms, carrion, and invertebrates alongside greens. This makes them more flexible and fun to feed.')">omnivores</span>. Target roughly <strong>70% leafy greens &amp; vegetables, 20% fruits, 10% protein</strong>. Variety across the week matters more than perfection on any given day.</p>
+      <p>As a hatchling, Slim should eat <strong>every day</strong>. Adults eat every other day.</p>
+    </div>
+    <p class="section-label">✅ Staple foods — tap for details</p>
+    <div class="food-grid">
+      <div class="fp fp-yes" onclick="ft(this,'Collard greens','Excellent calcium-to-phosphorus ratio. One of the best staple greens available. Found year-round at most grocery stores.')">Collard greens<div class="fsub">Staple</div></div>
+      <div class="fp fp-yes" onclick="ft(this,'Mustard greens','High in vitamins A and C. Slightly peppery — most red-foots enjoy it. Rotate with other greens throughout the week.')">Mustard greens<div class="fsub">Staple</div></div>
+      <div class="fp fp-yes" onclick="ft(this,'Dandelion','Entire plant is edible — leaves, flowers, and stems. Excellent nutrition and most tortoises go crazy for the yellow flowers. Forage from pesticide-free areas or grow your own.')">Dandelion<div class="fsub">Whole plant ❤️</div></div>
+      <div class="fp fp-yes" onclick="ft(this,'Turnip greens','Great calcium source. Often sold alongside mustard greens. Rotate into the weekly mix for variety.')">Turnip greens<div class="fsub">Staple</div></div>
+      <div class="fp fp-yes" onclick="ft(this,'Butternut squash','Excellent vitamin A and beta-carotene — important for eye health and immune function. Offer raw or lightly cooked with no seasoning.')">Butternut squash<div class="fsub">Great</div></div>
+      <div class="fp fp-yes" onclick="ft(this,'Hibiscus','Red-foots are absolutely obsessed with hibiscus. Flowers and leaves are both safe and nutritious. Try hand-feeding the flowers — great for bonding.')">Hibiscus<div class="fsub">Loves it ❤️</div></div>
+    </div>
+    <p class="section-label">⚠️ Treats — 2–3 times per week max</p>
+    <div class="food-grid">
+      <div class="fp fp-sometimes" onclick="ft(this,'Strawberries','High in vitamin C and natural sugars. Red-foots love them. Limit to 2× per week — too much fruit causes digestive upset and bacterial overgrowth in the gut.')">Strawberries<div class="fsub">2× per week</div></div>
+      <div class="fp fp-sometimes" onclick="ft(this,'Mango','Rich in vitamin A and beta-carotene. Remove skin and pit before offering. Excellent treat but high in sugar — keep it occasional.')">Mango<div class="fsub">Occasional</div></div>
+      <div class="fp fp-sometimes" onclick="ft(this,'Papaya','Great digestive enzymes and vitamins. Many red-foots love it. High sugar content means treat frequency only — not a staple.')">Papaya<div class="fsub">Occasional</div></div>
+      <div class="fp fp-sometimes" onclick="ft(this,'Earthworms','Excellent protein source. Buy from bait shops or raise your own. Offer 1× per week for hatchlings. Gut-load them for 24 hours before feeding to boost nutrition.')">Earthworms<div class="fsub">Protein 1×/wk</div></div>
+      <div class="fp fp-sometimes" onclick="ft(this,'Mushrooms','Wild-caught or store-bought non-toxic mushrooms are a natural red-foot food. High in nutrients. Only offer varieties you can positively identify as safe.')">Mushrooms<div class="fsub">Occasional</div></div>
+      <div class="fp fp-sometimes" onclick="ft(this,'Watermelon','Very high water content — great for hydration. Remove seeds. High sugar so offer as a treat only. Most tortoises love the red flesh.')">Watermelon<div class="fsub">Hydrating treat</div></div>
+    </div>
+    <p class="section-label">🚫 Never feed these</p>
+    <div class="food-grid">
+      <div class="fp fp-no" onclick="ft(this,'Spinach','Contains high oxalates which bind calcium and prevent absorption — even when you\'re supplementing. Regular feeding causes MBD even with good UVB.')">Spinach<div class="fsub">Oxalates</div></div>
+      <div class="fp fp-no" onclick="ft(this,'Citrus','Too acidic for a tortoise\'s digestive system. Causes stomach upset and diarrhea. Includes oranges, lemons, limes, and grapefruit.')">Citrus<div class="fsub">Too acidic</div></div>
+      <div class="fp fp-no" onclick="ft(this,'Dog or cat food','Way too high in protein, fat, and artificial additives. Regular feeding causes kidney damage and gout. Not worth any risk.')">Dog/cat food<div class="fsub">Kidney damage</div></div>
+      <div class="fp fp-no" onclick="ft(this,'Iceberg lettuce','Almost zero nutritional value — mostly water. Won\'t harm Slim but wastes feeding opportunities. Use real greens instead.')">Iceberg lettuce<div class="fsub">No nutrition</div></div>
+      <div class="fp fp-no" onclick="ft(this,'Avocado','Toxic to many reptiles due to persin, a fungicidal toxin. Keep away from Slim entirely.')">Avocado<div class="fsub">Toxic</div></div>
+      <div class="fp fp-no" onclick="ft(this,'Rhubarb','Very high in oxalic acid — toxic in any meaningful quantity. Avoid entirely.')">Rhubarb<div class="fsub">Toxic</div></div>
+    </div>
+    <div class="two-col" style="margin-top:13px;">
+      <div class="card">
+        <div class="card-header"><div class="card-icon ia">🧂</div><div class="card-title">Supplements</div></div>
+        <p><strong>Calcium carbonate</strong> — dust food lightly 3×/week. <strong>Multivitamin with D3</strong> — once per week. If UVB is excellent, skip extra D3 to avoid toxicity.</p>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-icon ib">💧</div><div class="card-title">Hydration</div></div>
+        <p>Shallow water dish always available — no deeper than Slim's chin. <strong>Soak 15–20 min, 3×/week</strong> in warm water. Soaking is one of the best things you can do for a hatchling.</p>
+      </div>
+    </div>
+    <div class="alert alert-l">🌿 Buy a variety of greens weekly and rotate. A tortoise eating the same thing daily misses key micronutrients — variety is the most important feeding principle.</div>
+  </div>
+
+  <!-- HEALTH -->
+  <div class="panel" id="p2">
+    <div class="card">
+      <div class="card-header"><div class="card-icon il">✅</div><div class="card-title">Signs Slim is thriving</div></div>
+      <ul class="checklist">
+        <li><div class="dot dot-ok"></div>Alert, bright eyes — no discharge, swelling, or cloudiness</li>
+        <li><div class="dot dot-ok"></div>Smooth, even shell growth — scutes flat and symmetrical</li>
+        <li><div class="dot dot-ok"></div>Active and curious during warm parts of the day</li>
+        <li><div class="dot dot-ok"></div>Good consistent appetite — eating enthusiastically</li>
+        <li><div class="dot dot-ok"></div>Firm, well-formed droppings with white urate</li>
+        <li><div class="dot dot-ok"></div>Vibrant red/orange scales on feet, legs, and face</li>
+        <li><div class="dot dot-ok"></div>Gaining weight steadily when weighed weekly</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-icon ir">⚠️</div><div class="card-title">See a vet if you notice...</div></div>
+      <ul class="checklist">
+        <li><div class="dot dot-warn"></div>Wheezing, clicking, open-mouth breathing, mucus — <span class="tip-trigger" onclick="tt(this,'Upper Respiratory Infection (URI) is among the most common tortoise illnesses. Caused by cold temps or low humidity. Symptoms include nasal discharge, wheezing, and lethargy. Requires antibiotic treatment from a vet — do not wait on this one.')">possible URI</span></li>
+        <li><div class="dot dot-warn"></div>Swollen, puffy, or persistently closed eyelids</li>
+        <li><div class="dot dot-warn"></div>Soft, mushy, or deformed shell — possible <span class="tip-trigger" onclick="tt(this,'Metabolic Bone Disease (MBD) occurs when tortoises cannot absorb enough calcium, usually due to inadequate UVB or low calcium diet. Symptoms include soft shell, rubbery limbs, and lethargy. Caught early it\'s treatable — caught late it can be fatal.')">MBD</span></li>
+        <li><div class="dot dot-warn"></div>Lethargy, hiding, or refusing food for 2–3+ days</li>
+        <li><div class="dot dot-warn"></div>Bloody, very runny, or extremely foul stool</li>
+        <li><div class="dot dot-warn"></div>No stool for 7+ days — possible <span class="tip-trigger" onclick="tt(this,'Intestinal impaction happens when a tortoise ingests substrate, debris, or something indigestible that blocks the digestive tract. A warm soak can sometimes help mild cases — but no stool for 7+ days means call the vet.')">impaction</span></li>
+        <li><div class="dot dot-warn"></div>Pitting, soft spots, or foul smell from shell — <span class="tip-trigger" onclick="tt(this,'Shell rot is a bacterial or fungal infection of the shell. It appears as soft, pitted, or discolored areas and may smell bad. Mild cases can be cleaned and treated topically. Severe or spreading cases need a vet immediately.')">shell rot</span></li>
+      </ul>
+    </div>
+    <div class="alert alert-l">🩺 Find a <strong>reptile-specialist vet</strong> now — before you need one. Search "exotic vet Vancouver WA" or "reptile vet Portland." Most general vets lack tortoise experience.</div>
+    <div class="card">
+      <div class="card-header"><div class="card-icon ia">📖</div><div class="card-title">Conditions explained</div></div>
+      <p><strong>MBD</strong> — caused by calcium/D3 deficiency. Prevented entirely with strong UVB lighting and consistent calcium supplementation. One of the most common and most preventable tortoise conditions.</p>
+      <p><strong>Respiratory infections</strong> — caused by cold drafts, incorrect temps, or chronic low humidity. URIs need antibiotic treatment from a vet. Prevention is maintaining a stable warm environment.</p>
+      <p><strong>Shell rot</strong> — bacterial or fungal shell infection from wet or dirty substrate. Keep enclosure clean and substrate damp but never waterlogged.</p>
+      <p><strong>Parasites</strong> — internal parasites are very common, especially in new animals. Get a fecal exam done within the first few months of ownership. Easily treated once identified.</p>
+      <p><strong>Pyramiding</strong> — not a disease, but a permanent shell deformity from low humidity during growth. Prevented entirely by keeping humidity at 75–80% from hatchling stage onward.</p>
+    </div>
+    <div class="alert alert-a">🐢 Slim's first year is the most critical period of his life. Stable temps, high humidity, daily feeding, and regular soaking are your four main tools right now.</div>
+  </div>
+
+  <!-- SCHEDULE -->
+  <div class="panel" id="p3">
+
+    <!-- Date bar -->
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:13px 16px;margin-bottom:11px;display:flex;align-items:center;justify-content:space-between;">
+      <div>
+        <div style="font-family:'Lora',serif;font-size:18px;font-weight:600;color:var(--cream);" id="sched-date">-</div>
+        <div style="font-size:11px;color:var(--text-dim);margin-top:2px;text-transform:uppercase;letter-spacing:0.06em;" id="sched-day">-</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-family:'Lora',serif;font-size:22px;font-weight:600;color:var(--amber-light);" id="sched-time">-</div>
+        <div style="font-size:11px;color:var(--text-dim);margin-top:2px;" id="sched-age">-</div>
+      </div>
+    </div>
+
+    <!-- Daily checklist -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon il">✅</div>
+        <div class="card-title">Today's checklist</div>
+        <button onclick="resetChecklist()" style="margin-left:auto;font-size:11px;color:var(--text-dim);background:none;border:none;cursor:pointer;font-family:inherit;padding:4px 8px;border-radius:6px;">reset</button>
+      </div>
+      <div id="daily-list"></div>
+    </div>
+
+    <!-- Daily routine times - dynamically highlighted by time of day -->
+    <div class="card">
+      <div class="card-header"><div class="card-icon ia">☀️</div><div class="card-title">Daily routine</div></div>
+      <div id="routine-list">
+        <div class="sched-item" data-period="morning">
+          <div style="display:flex;flex-direction:column;width:72px;flex-shrink:0;gap:2px;">
+            <span class="sched-time">Morning</span>
+            <span style="font-size:10px;color:var(--text-dim);">6am – 12pm</span>
+          </div>
+          <span class="sched-desc">Lights on. Check temp &amp; humidity. Offer fresh food — greens first thing while Slim is most active.</span>
+        </div>
+        <div class="sched-item" data-period="midday">
+          <div style="display:flex;flex-direction:column;width:72px;flex-shrink:0;gap:2px;">
+            <span class="sched-time">Midday</span>
+            <span style="font-size:10px;color:var(--text-dim);">12pm – 3pm</span>
+          </div>
+          <span class="sched-desc">Peak basking window — core temps rise and digestion kicks in. Best time to observe behavior and spot anything unusual.</span>
+        </div>
+        <div class="sched-item" data-period="afternoon">
+          <div style="display:flex;flex-direction:column;width:72px;flex-shrink:0;gap:2px;">
+            <span class="sched-time">Afternoon</span>
+            <span style="font-size:10px;color:var(--text-dim);">3pm – 7pm</span>
+          </div>
+          <span class="sched-desc">Remove uneaten food before it spoils. Mist substrate if humidity dropped below 65%. Good time for a soak if scheduled.</span>
+        </div>
+        <div class="sched-item" data-period="evening" style="border-bottom:none;">
+          <div style="display:flex;flex-direction:column;width:72px;flex-shrink:0;gap:2px;">
+            <span class="sched-time">Evening</span>
+            <span style="font-size:10px;color:var(--text-dim);">7pm – lights out</span>
+          </div>
+          <span class="sched-desc">Lights off (timer handles it). Verify night temps stay above 65°F — a ceramic heat emitter helps on cold nights.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Non-daily reference -->
+    <div class="card">
+      <div class="card-header"><div class="card-icon ia">📋</div><div class="card-title">Other tasks - for reference</div></div>
+      <p style="font-size:12px;color:var(--text-dim);margin-bottom:10px;">Not tracked - just a reminder list.</p>
+      <div class="sched-item"><span class="sched-time" style="color:var(--text-muted);width:80px;">2-3x/week</span><span class="sched-desc">Soak Slim 15-20 min in warm shallow water</span></div>
+      <div class="sched-item"><span class="sched-time" style="color:var(--text-muted);width:80px;">Weekly</span><span class="sched-desc">Weigh Slim on a kitchen scale and note it down</span></div>
+      <div class="sched-item"><span class="sched-time" style="color:var(--text-muted);width:80px;">Monthly</span><span class="sched-desc">Deep-clean enclosure and refresh substrate</span></div>
+      <div class="sched-item"><span class="sched-time" style="color:var(--text-muted);width:80px;">6-12 mo</span><span class="sched-desc">Replace UVB bulb even if still lit</span></div>
+      <div class="sched-item" style="border-bottom:none;"><span class="sched-time" style="color:var(--text-muted);width:80px;">Yearly</span><span class="sched-desc">Vet check + fecal parasite test</span></div>
+    </div>
+
+  </div>
+
+  <!-- GROWTH -->
+  <div class="panel" id="p4">
+    <div class="card">
+      <div class="card-header"><div class="card-icon ia">📏</div><div class="card-title">Slim's growth stages</div></div>
+      <p style="margin-bottom:12px;font-size:13px;">Red-foots grow steadily for 10–15 years. Tap each stage for details.</p>
+      <div class="gs" onclick="tt(this,'Slim is here right now. Hatchlings are 1.5–2 inches at birth and likely 2–3 inches at 3 months. Feed daily, soak 3× weekly, and keep humidity very high. This is the most critical growth window.')">
+        <span class="gs-label">Hatchling<br><span style="font-size:10px;color:var(--text-dim)">0–6 months</span></span>
+        <div class="gs-track"><div class="gs-fill" style="width:12%;"></div><div class="gs-now" style="left:12%;"></div></div>
+        <span class="gs-size">~2″</span>
+      </div>
+      <div class="gs" onclick="tt(this,'Shell growth rings appear clearly during the juvenile stage. Enclosure should be upgraded by the end of this period. Continue daily feeding and 3× weekly soaking.')">
+        <span class="gs-label">Juvenile<br><span style="font-size:10px;color:var(--text-dim)">6mo–3 yrs</span></span>
+        <div class="gs-track"><div class="gs-fill" style="width:35%;"></div></div>
+        <span class="gs-size">3–6″</span>
+      </div>
+      <div class="gs" onclick="tt(this,'Sexual maturity is reached around 5 years, but females shouldn\'t breed until 8–10 years and proper weight. Growth slows but continues. Move toward the final adult enclosure size.')">
+        <span class="gs-label">Sub-adult<br><span style="font-size:10px;color:var(--text-dim)">3–8 yrs</span></span>
+        <div class="gs-track"><div class="gs-fill" style="width:65%;"></div></div>
+        <span class="gs-size">7–11″</span>
+      </div>
+      <div class="gs" onclick="tt(this,'Adult red-foots reach 10–16 inches and 10–20 lbs. Growth never fully stops. Adults need 4×8 ft+ enclosures, outdoor access in warm months, and the same consistent care.')">
+        <span class="gs-label">Adult<br><span style="font-size:10px;color:var(--text-dim)">8+ yrs</span></span>
+        <div class="gs-track"><div class="gs-fill" style="width:100%;"></div></div>
+        <span class="gs-size">10–16″</span>
+      </div>
+      <p style="font-size:12px;color:var(--text-dim);margin-top:6px;">● = Slim's current approximate stage</p>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-icon il">⚖️</div><div class="card-title">Weekly weight tracking</div></div>
+      <p>Weigh Slim weekly on a kitchen scale and log the number. Steady gains — even slow ones — are a great sign. Weight loss over 2+ consecutive weeks is a red flag. Flat weight for 3+ weeks in a hatchling means checking temps, humidity, and food variety.</p>
+      <hr>
+      <p><strong>Rough weight milestones:</strong></p>
+      <p>At birth: ~20–40g. By 6 months: ~60–100g. By 1 year: ~100–180g. These are rough guides — individual variation is totally normal.</p>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-icon ia">🏡</div><div class="card-title">Enclosure upgrade roadmap</div></div>
+      <ul class="checklist">
+        <li><div class="dot dot-ok"></div><strong>Now:</strong> 2×3 ft minimum — current setup likely sufficient</li>
+        <li><div class="dot dot-ok"></div><strong>Year 1–2:</strong> 2×4 ft as Slim approaches 4–5 inches</li>
+        <li><div class="dot dot-ok"></div><strong>Year 3–5:</strong> 3×6 ft — consider a custom tortoise table</li>
+        <li><div class="dot dot-ok"></div><strong>Year 5+:</strong> 4×8 ft minimum — permanent adult setup</li>
+        <li><div class="dot dot-ok"></div><strong>Summer:</strong> outdoor pen when temps stay above 70°F</li>
+      </ul>
+    </div>
+    <div class="alert alert-a">🌞 Outdoor time in a secure pen during Vancouver summers is hugely beneficial. Natural UVB, fresh air, and real foraging behavior. Just make sure it's escape-proof and predator-proof.</div>
+  </div>
+
+  <!-- SLIM'S PERSONALITY -->
+  <div class="panel" id="p5">
+
+    <!-- Hero identity block -->
+    <div style="background:linear-gradient(135deg,rgba(200,125,26,0.12),rgba(192,64,32,0.07));border:1px solid rgba(200,125,26,0.2);border-radius:var(--r);padding:18px;margin-bottom:11px;">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:12px;">
+        <div style="font-size:44px;filter:drop-shadow(0 3px 10px rgba(200,125,26,0.4));">🐢</div>
+        <div>
+          <div style="font-family:'Lora',serif;font-size:22px;font-weight:600;color:var(--cream);">Slim</div>
+          <div style="font-size:12px;color:var(--text-muted);font-style:italic;">Chelonoidis carbonaria</div>
+          <div style="font-size:11px;color:var(--text-dim);margin-top:3px;">Born ~Dec 2025 · Vancouver, WA</div>
+        </div>
+      </div>
+      <p style="font-size:13.5px;color:var(--text-muted);line-height:1.65;">Red-footed tortoises are widely regarded as the most <strong>personable and social</strong> tortoise species kept as pets. Unlike most reptiles, they appear to genuinely enjoy interaction — Slim will likely learn to recognize you by sight and scent over the coming months.</p>
+    </div>
+
+    <!-- Horizontal scrolling species stats -->
+    <p class="section-label">Species profile</p>
+    <div style="display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:4px;margin-bottom:11px;">
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;flex-shrink:0;min-width:120px;">
+        <div style="font-size:11px;color:var(--text-dim);margin-bottom:4px;">Native range</div>
+        <div style="font-size:13px;font-weight:500;color:var(--text);">South America</div>
+        <div style="font-size:11px;color:var(--text-dim);margin-top:2px;">Colombia to Argentina</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;flex-shrink:0;min-width:120px;">
+        <div style="font-size:11px;color:var(--text-dim);margin-bottom:4px;">Wild habitat</div>
+        <div style="font-size:13px;font-weight:500;color:var(--text);">Tropical forest</div>
+        <div style="font-size:11px;color:var(--text-dim);margin-top:2px;">Edge &amp; grassland too</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;flex-shrink:0;min-width:120px;">
+        <div style="font-size:11px;color:var(--text-dim);margin-bottom:4px;">Activity pattern</div>
+        <div style="font-size:13px;font-weight:500;color:var(--text);">Diurnal</div>
+        <div style="font-size:11px;color:var(--text-dim);margin-top:2px;">Active by day, rests at night</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;flex-shrink:0;min-width:120px;">
+        <div style="font-size:11px;color:var(--text-dim);margin-bottom:4px;">Wild diet</div>
+        <div style="font-size:13px;font-weight:500;color:var(--text);">Omnivore</div>
+        <div style="font-size:11px;color:var(--text-dim);margin-top:2px;">Fruit, fungi, carrion</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;flex-shrink:0;min-width:120px;">
+        <div style="font-size:11px;color:var(--text-dim);margin-bottom:4px;">Conservation</div>
+        <div style="font-size:13px;font-weight:500;color:var(--text);">Vulnerable</div>
+        <div style="font-size:11px;color:var(--text-dim);margin-top:2px;">IUCN Red List</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;flex-shrink:0;min-width:120px;">
+        <div style="font-size:11px;color:var(--text-dim);margin-bottom:4px;">Brumation</div>
+        <div style="font-size:13px;font-weight:500;color:var(--text);">None</div>
+        <div style="font-size:11px;color:var(--text-dim);margin-top:2px;">Active year-round</div>
+      </div>
+    </div>
+
+    <!-- Behaviour & cognition -->
+    <div class="card">
+      <div class="card-header"><div class="card-icon ia">🧠</div><div class="card-title">Behaviour &amp; cognition</div></div>
+      <p>Research on tortoise cognition has consistently surprised scientists. Red-foots in particular demonstrate <strong>spatial memory</strong>, object recognition, and basic problem-solving — capabilities long assumed absent in reptiles. A 2014 study found red-footed tortoises could solve food-access puzzles and retain the solution months later.</p>
+      <p>They also show <strong>social learning</strong>: tortoises that observed a trained individual solving a task were able to replicate it — even though tortoises aren't considered social animals. This challenges the long-held idea that only mammals and birds are capable of learning from observation.</p>
+    </div>
+
+    <!-- Communication -->
+    <div class="card">
+      <div class="card-header"><div class="card-icon ia">🗣️</div><div class="card-title">How Slim communicates</div></div>
+      <p>Red-foots have a surprisingly nuanced set of signals once you know what to look for:</p>
+      <div style="margin-top:10px;display:flex;flex-direction:column;gap:0;">
+        <div class="sched-item"><span style="font-size:15px;width:28px;flex-shrink:0;">🐢</span><span class="sched-desc"><strong>Slow head bobs</strong> — curiosity or social acknowledgment. A good sign, especially toward you.</span></div>
+        <div class="sched-item"><span style="font-size:15px;width:28px;flex-shrink:0;">🫸</span><span class="sched-desc"><strong>Rapid head shake</strong> — mild irritation or overstimulation. Give Slim some space.</span></div>
+        <div class="sched-item"><span style="font-size:15px;width:28px;flex-shrink:0;">🫁</span><span class="sched-desc"><strong>Hissing</strong> — startled or stressed. Usually just air expelled when retreating into the shell.</span></div>
+        <div class="sched-item"><span style="font-size:15px;width:28px;flex-shrink:0;">🚶</span><span class="sched-desc"><strong>Approaching you</strong> — learned association with food or positive interaction. A big milestone.</span></div>
+        <div class="sched-item" style="border-bottom:none;"><span style="font-size:15px;width:28px;flex-shrink:0;">🙈</span><span class="sched-desc"><strong>Retreating into shell</strong> — feels unsafe. Minimize handling until Slim is more settled in.</span></div>
+      </div>
+    </div>
+
+    <!-- Wild life -->
+    <div class="card">
+      <div class="card-header"><div class="card-icon il">🌴</div><div class="card-title">Life in the wild</div></div>
+      <p>In South American tropical forests, red-foots occupy a unique ecological niche as <strong>mid-level omnivores</strong>. They play an important role in seed dispersal — swallowing whole fruits and depositing seeds far from the parent plant.</p>
+      <p>Wild red-foots have been tracked with home ranges of <strong>up to 25 acres</strong> in some studies, moving considerably more than most people assume. They follow seasonal fruiting patterns, knowing which trees produce fruit at which times of year — a form of long-term spatial memory that takes years to develop.</p>
+      <p>They are also <strong>surprisingly good climbers</strong> for a heavy-bodied animal, occasionally scaling logs and low embankments. Slim will likely try to climb anything interesting in his enclosure.</p>
+    </div>
+
+    <!-- The colours -->
+    <div class="card">
+      <div class="card-header"><div class="card-icon ir">🟠</div><div class="card-title">The red scales — what they mean</div></div>
+      <p>The vivid red and orange scales on Slim's feet and head are the species' namesake — and they're a direct window into his health. The colour comes from <strong>carotenoid pigments</strong> absorbed from food, the same compounds responsible for the colour of flamingos, salmon, and autumn leaves.</p>
+      <p>A tortoise eating a varied, nutrient-rich diet will develop bright, saturated colours. A poorly-fed tortoise fades. This makes Slim's scale colour one of the most visible health indicators you have — <strong>vibrant orange = good diet</strong>.</p>
+    </div>
+
+    <!-- Handling -->
+    <div class="two-col">
+      <div class="card">
+        <div class="card-header"><div class="card-icon il">🤲</div><div class="card-title">Handling</div></div>
+        <p>Support all four legs. Sessions 10–15 min max. Wash hands before and after. If legs pull in, Slim is done — respect it.</p>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-icon ir">🏠</div><div class="card-title">With others</div></div>
+        <p>Naturally solitary. Can coexist with same species but watch for competition. Never house two males together.</p>
+      </div>
+    </div>
+
+    <div class="alert alert-l">❤️ Slim may outlive most pets — and possibly some of his owners. He is a lifelong commitment worth planning for carefully, including naming a future caretaker.</div>
+
+  </div>
+
+<div id="overlay" onclick="closeTip()"></div>
+<div id="ftip"><span id="ftip-body"></span><span class="tc" onclick="closeTip()">tap to close</span></div>
+
+<script>
+const panels=document.querySelectorAll('.panel');
+const btns=document.querySelectorAll('.nav-btn');
+const dots=document.querySelectorAll('#dn span');
+let cur=0;
+
+function go(i,btn){
+  panels[cur].classList.remove('active');
+  btns[cur].classList.remove('active');
+  dots[cur].classList.remove('active');
+  cur=i;
+  panels[i].classList.add('active');
+  btn.classList.add('active');
+  dots[i].classList.add('active');
+  btn.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+  window.scrollTo({top:document.querySelector('.nav-wrap').offsetTop-1,behavior:'smooth'});
+  if(navigator.vibrate)navigator.vibrate(8);
+  closeTip();
+}
+
+function showTipAt(text,refEl){
+  const tip=document.getElementById('ftip');
+  const ov=document.getElementById('overlay');
+  document.getElementById('ftip-body').innerHTML=text;
+  tip.classList.add('on');
+  ov.classList.add('on');
+  const r=refEl.getBoundingClientRect();
+  let top=r.bottom+window.scrollY+8;
+  let left=r.left+window.scrollX;
+  const tw=250;
+  if(left+tw>window.innerWidth-8)left=window.innerWidth-tw-8;
+  if(left<8)left=8;
+  const vh=window.innerHeight;
+  const tipH=140;
+  if(r.bottom+tipH>vh)top=r.top+window.scrollY-tipH-8;
+  tip.style.top=top+'px';
+  tip.style.left=left+'px';
+  tip.style.maxWidth=tw+'px';
+}
+
+function tt(el,text){showTipAt(text,el);}
+function st(el,text){
+  const wasOn=el.classList.contains('tip-open');
+  document.querySelectorAll('.stat').forEach(s=>s.classList.remove('tip-open'));
+  if(!wasOn){el.classList.add('tip-open');showTipAt(text,el);}
+  else closeTip();
+}
+function ft(el,name,desc){showTipAt('<strong style="color:var(--cream);font-size:13px;">'+name+'</strong><br><span style="font-size:12.5px;">'+desc+'</span>',el);}
+function closeTip(){
+  document.getElementById('ftip').classList.remove('on');
+  document.getElementById('overlay').classList.remove('on');
+  document.querySelectorAll('.stat').forEach(s=>s.classList.remove('tip-open'));
+}
+
+// Swipe
+let sx=0,sy=0;
+document.getElementById('ct').addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});
+document.getElementById('ct').addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-sx;
+  const dy=e.changedTouches[0].clientY-sy;
+  if(Math.abs(dx)>55&&Math.abs(dx)>Math.abs(dy)*1.5){
+    if(dx<0&&cur<panels.length-1)go(cur+1,btns[cur+1]);
+    else if(dx>0&&cur>0)go(cur-1,btns[cur-1]);
+  }
+},{passive:true});
+
+// Animate temp bars
+setTimeout(()=>{
+  [{id:'tf1',w:'95%'},{id:'tf2',w:'78%'},{id:'tf3',w:'60%'},{id:'tf4',w:'48%'}]
+  .forEach((f,i)=>setTimeout(()=>{const e=document.getElementById(f.id);if(e)e.style.width=f.w;},i*130));
+},400);
+
+// -- SCHEDULE: simple daily checklist --
+
+const SLIM_BORN = new Date('2025-12-20');
+
+const DAILY_TASKS = [
+  {id:'feed',  label:'Feed Slim',            emoji:'🥬'},
+  {id:'mist',  label:'Mist substrate',       emoji:'💧'},
+  {id:'water', label:'Check water dish',     emoji:'🪴'},
+  {id:'temp',  label:'Check temp & humidity',emoji:'🌡️'},
+  {id:'obs',   label:'Observe Slim',         emoji:'🐢'},
+];
+
+function todayKey() {
+  return 'slim_daily_' + new Date().toISOString().split('T')[0];
+}
+function loadChecked() {
+  try { return JSON.parse(localStorage.getItem(todayKey()) || '[]'); } catch(e) { return []; }
+}
+function saveChecked(arr) {
+  try { localStorage.setItem(todayKey(), JSON.stringify(arr)); } catch(e) {}
+}
+
+function renderChecklist() {
+  const checked = loadChecked();
+  const container = document.getElementById('daily-list');
+  if (!container) return;
+  const allDone = checked.length === DAILY_TASKS.length;
+  let html = DAILY_TASKS.map(t => {
+    const done = checked.includes(t.id);
+    const circle = done
+      ? '<div style="width:28px;height:28px;border-radius:50%;border:2px solid #4a7c3f;background:rgba(74,124,63,0.25);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;color:#7ab56d;">&#10003;</div>'
+      : '<div style="width:28px;height:28px;border-radius:50%;border:2px solid rgba(255,255,255,0.2);background:transparent;flex-shrink:0;"></div>';
+    const label = '<span style="font-size:14px;font-weight:500;color:' + (done ? 'var(--text-dim)' : 'var(--text)') + ';text-decoration:' + (done ? 'line-through' : 'none') + ';flex:1;">' + t.label + '</span>';
+    return '<div onclick="toggleTask(\'' + t.id + '\')" style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);cursor:pointer;">' + circle + '<span style="font-size:15px;">' + t.emoji + '</span>' + label + '</div>';
+  }).join('');
+  if (allDone) {
+    html += '<div style="padding:12px 0 4px;text-align:center;font-size:13px;color:#7ab56d;">All done for today! Good job taking care of Slim.</div>';
+  } else {
+    html += '<div style="padding:10px 0 2px;text-align:center;font-size:11px;color:var(--text-dim);">' + checked.length + ' of ' + DAILY_TASKS.length + ' done today</div>';
+  }
+  container.innerHTML = html;
+}
+
+function toggleTask(id) {
+  const checked = loadChecked();
+  const idx = checked.indexOf(id);
+  if (idx === -1) checked.push(id);
+  else checked.splice(idx, 1);
+  saveChecked(checked);
+  if (navigator.vibrate) navigator.vibrate(8);
+  renderChecklist();
+}
+
+function resetChecklist() {
+  try { localStorage.removeItem(todayKey()); } catch(e) {}
+  renderChecklist();
+}
+
+function fmtAge(born) {
+  const now = new Date();
+  let months = (now.getFullYear() - born.getFullYear()) * 12 + (now.getMonth() - born.getMonth());
+  if (now.getDate() < born.getDate()) months--;
+  if (months < 2) { const d = Math.floor((now - born) / 86400000); return d + ' days old'; }
+  if (months < 24) return months + ' mo old';
+  return Math.floor(months/12) + ' yr ' + (months % 12) + ' mo old';
+}
+
+function currentPeriod() {
+  const h = new Date().getHours();
+  if (h >= 6  && h < 12) return 'morning';
+  if (h >= 12 && h < 15) return 'midday';
+  if (h >= 15 && h < 19) return 'afternoon';
+  return 'evening';
+}
+
+function highlightRoutine() {
+  const period = currentPeriod();
+  document.querySelectorAll('#routine-list .sched-item').forEach(row => {
+    const isNow = row.dataset.period === period;
+    row.style.background = isNow ? 'rgba(200,125,26,0.08)' : '';
+    row.style.borderRadius = isNow ? '10px' : '';
+    row.style.marginLeft = isNow ? '-4px' : '';
+    row.style.paddingLeft = isNow ? '12px' : '';
+    row.style.borderLeft = isNow ? '3px solid var(--amber)' : '3px solid transparent';
+    const timeEl = row.querySelector('.sched-time');
+    if (timeEl) timeEl.style.color = isNow ? 'var(--amber-light)' : '';
+    // now badge
+    let badge = row.querySelector('.now-badge');
+    if (isNow && !badge) {
+      badge = document.createElement('span');
+      badge.className = 'now-badge';
+      badge.textContent = 'now';
+      badge.style.cssText = 'font-size:10px;font-weight:500;padding:2px 7px;border-radius:99px;background:rgba(200,125,26,0.25);color:var(--amber-light);margin-left:6px;vertical-align:middle;';
+      const timeEl2 = row.querySelector('.sched-time');
+      if (timeEl2) timeEl2.appendChild(badge);
+    } else if (!isNow && badge) {
+      badge.remove();
+    }
+  });
+}
+
+function updateClock() {
+  const now = new Date();
+  const d = document.getElementById('sched-date');
+  const dy = document.getElementById('sched-day');
+  const t = document.getElementById('sched-time');
+  const a = document.getElementById('sched-age');
+  if (!d) return;
+  d.textContent = now.toLocaleDateString('en-US', {month:'long', day:'numeric', year:'numeric'});
+  dy.textContent = now.toLocaleDateString('en-US', {weekday:'long'});
+  t.textContent = now.toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'});
+  a.textContent = 'Slim: ' + fmtAge(SLIM_BORN);
+  highlightRoutine();
+}
+
+updateClock();
+setInterval(updateClock, 30000);
+renderChecklist();
+</script>
+</body>
+</html>
