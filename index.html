@@ -69,7 +69,6 @@ strong{color:var(--text);font-weight:500;}
 .temp-val{font-size:12px;font-weight:500;color:var(--amber-light);width:55px;text-align:right;flex-shrink:0;}
 .section-label{font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.08em;margin:15px 0 9px;font-weight:500;}
 .food-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
-
 .fp .fsub{font-size:10px;font-weight:400;margin-top:3px;opacity:0.75;}
 .fp-yes{background:rgba(74,124,63,0.2);color:#7ab56d;}
 .fp-no{background:rgba(192,64,32,0.2);color:#e07060;}
@@ -77,7 +76,7 @@ strong{color:var(--text);font-weight:500;}
 .checklist{list-style:none;}
 .checklist li{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--border);font-size:13.5px;color:var(--text-muted);line-height:1.5;}
 .checklist li:last-child{border-bottom:none;padding-bottom:0;}
-.dot{width:19px;height:19px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:1px;font-size:11px;font-weight:600;}
+.dot{width:19px;height:19px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:margin-top:1px;font-size:11px;font-weight:600;}
 .dot-ok{background:rgba(74,124,63,0.25);color:#7ab56d;}
 .dot-ok::after{content:'✓';}
 .dot-warn{background:rgba(200,125,26,0.2);color:var(--amber);}
@@ -107,6 +106,65 @@ hr{border:none;border-top:1px solid var(--border);margin:13px 0;}
 #ftip .tc{display:block;margin-top:9px;font-size:11px;color:var(--amber);text-align:right;}
 .fp{border-radius:11px;padding:11px 8px;text-align:center;font-size:12px;font-weight:500;line-height:1.3;cursor:pointer;transition:transform 0.15s,box-shadow 0.15s;user-select:none;}
 .fp:active{transform:scale(0.93);}
+.version-bar{text-align:center;padding:16px 0 calc(var(--safe-bottom) + 16px);font-size:11px;color:var(--text-dim);}
+
+  /* FOOD LIST */
+  .food-list { margin-bottom: 4px; }
+  .food-row {
+    border-radius: 12px;
+    margin-bottom: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .food-row-main {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+  }
+  .food-name { font-size: 14px; font-weight: 500; }
+  .food-badge {
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 99px;
+    font-weight: 500;
+    flex-shrink: 0;
+    margin-left: 8px;
+  }
+  .food-detail {
+    display: none;
+    font-size: 13px;
+    line-height: 1.6;
+    padding: 0 14px 12px;
+  }
+  .food-row.open .food-detail { display: block; }
+  .food-row.food-yes { background: rgba(74,124,63,0.15); }
+  .food-row.food-yes .food-name { color: #7ab56d; }
+  .food-row.food-yes .food-detail { color: #5a9050; }
+  .badge-yes { background: rgba(74,124,63,0.3); color: #7ab56d; }
+  .food-row.food-sometimes { background: rgba(200,125,26,0.12); }
+  .food-row.food-sometimes .food-name { color: #d49040; }
+  .food-row.food-sometimes .food-detail { color: #b07030; }
+  .badge-sometimes { background: rgba(200,125,26,0.25); color: #d49040; }
+  .food-row.food-no { background: rgba(192,64,32,0.12); }
+  .food-row.food-no .food-name { color: #e07060; }
+  .food-row.food-no .food-detail { color: #c05040; }
+  .badge-no { background: rgba(192,64,32,0.25); color: #e07060; }
+
+  /* Update toast */
+  #update-toast{
+    display:none;position:fixed;bottom:calc(var(--safe-bottom) + 16px);
+    left:50%;transform:translateX(-50%);
+    background:var(--amber);color:#1a1a0f;
+    font-size:13px;font-weight:500;
+    padding:10px 20px;border-radius:99px;
+    z-index:9999;white-space:nowrap;
+    box-shadow:0 4px 20px rgba(0,0,0,0.4);
+    animation:slideUp 0.3s ease;
+    cursor:pointer;
+  }
+  @keyframes slideUp{from{opacity:0;transform:translateX(-50%) translateY(12px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
 </style>
 </head>
 <body>
@@ -195,58 +253,117 @@ hr{border:none;border-top:1px solid var(--border);margin:13px 0;}
     <div class="alert alert-a">💧 Target 75–80% humidity right now. Mist substrate daily and verify with a <span class="tip-trigger" onclick="tt(this,'A cheap digital thermometer/hygrometer combo from Amazon works great. Analog dial gauges are notoriously inaccurate — avoid them. Place it at substrate level on the cool side for the most representative reading.')">digital hygrometer</span>. This is the single most important variable for hatchling health.</div>
     <div class="card">
       <div class="card-header"><div class="card-icon ip">🌿</div><div class="card-title">Live plants</div></div>
-      <p>Adding live plants boosts humidity, provides enrichment, and lets Slim graze naturally. Great options: <strong>pothos, hibiscus, spider plants, and wandering jew</strong>. Always verify a plant is non-toxic before adding. They also make the enclosure dramatically more beautiful.</p>
+      <p>Adding live plants boosts humidity, provides enrichment, and lets Slim graze naturally. Great options: <strong>pothos, hibiscus, spider plants, and wandering jew</strong>. Always verify a plant is non-toxic before adding.</p>
     </div>
   </div>
 
-  <!-- FEEDING -->
-  <div class="panel" id="p1">
+<!-- FEEDING -->
+  <div id="feeding" class="panel">
     <div class="card">
-      <div class="card-header"><div class="card-icon il">🌿</div><div class="card-title">Diet overview</div></div>
-      <p>Red-footed tortoises are <span class="tip-trigger" onclick="tt(this,'Unlike most tortoise species which are strict herbivores, red-foots evolved in tropical South American forests where they eat fallen fruits, mushrooms, carrion, and invertebrates alongside greens. This makes them more flexible and fun to feed.')">omnivores</span>. Target roughly <strong>70% leafy greens &amp; vegetables, 20% fruits, 10% protein</strong>. Variety across the week matters more than perfection on any given day.</p>
-      <p>As a hatchling, Slim should eat <strong>every day</strong>. Adults eat every other day.</p>
-    </div>
-    <p class="section-label" style="color:#7ab56d;">✅ Staple foods — tap any for details</p>
-    <div class="food-grid">
-      <div class="fp fp-yes" onclick="ft(this,'Collard greens','Excellent calcium-to-phosphorus ratio. One of the best staple greens available. Found year-round at most grocery stores.')">Collard greens<div class="fsub">Staple</div></div>
-      <div class="fp fp-yes" onclick="ft(this,'Mustard greens','High in vitamins A and C. Slightly peppery — most red-foots enjoy it. Rotate with other greens throughout the week.')">Mustard greens<div class="fsub">Staple</div></div>
-      <div class="fp fp-yes" onclick="ft(this,'Dandelion','Entire plant is edible — leaves, flowers, and stems. Excellent nutrition and most tortoises go crazy for the yellow flowers. Forage from pesticide-free areas or grow your own.')">Dandelion<div class="fsub">Whole plant ❤️</div></div>
-      <div class="fp fp-yes" onclick="ft(this,'Turnip greens','Great calcium source. Often sold alongside mustard greens. Rotate into the weekly mix for variety.')">Turnip greens<div class="fsub">Staple</div></div>
-      <div class="fp fp-yes" onclick="ft(this,'Butternut squash','Excellent vitamin A and beta-carotene — important for eye health and immune function. Offer raw or lightly cooked with no seasoning.')">Butternut squash<div class="fsub">Great</div></div>
-      <div class="fp fp-yes" onclick="ft(this,'Hibiscus','Red-foots are absolutely obsessed with hibiscus. Flowers and leaves are both safe and nutritious. Try hand-feeding the flowers — great for bonding.')">Hibiscus<div class="fsub">Loves it ❤️</div></div>
-    </div>
-    <p class="section-label" style="color:#d49040;">⚠️ Treats — tap any for details</p>
-    <div class="food-grid">
-      <div class="fp fp-sometimes" onclick="ft(this,'Strawberries','High in vitamin C and natural sugars. Red-foots love them. Limit to 2× per week — too much fruit causes digestive upset and bacterial overgrowth in the gut.')">Strawberries<div class="fsub">2× per week</div></div>
-      <div class="fp fp-sometimes" onclick="ft(this,'Mango','Rich in vitamin A and beta-carotene. Remove skin and pit before offering. Excellent treat but high in sugar — keep it occasional.')">Mango<div class="fsub">Occasional</div></div>
-      <div class="fp fp-sometimes" onclick="ft(this,'Papaya','Great digestive enzymes and vitamins. Many red-foots love it. High sugar content means treat frequency only — not a staple.')">Papaya<div class="fsub">Occasional</div></div>
-      <div class="fp fp-sometimes" onclick="ft(this,'Earthworms','Excellent protein source. Buy from bait shops or raise your own. Offer 1× per week for hatchlings. Gut-load them for 24 hours before feeding to boost nutrition.')">Earthworms<div class="fsub">Protein 1×/wk</div></div>
-      <div class="fp fp-sometimes" onclick="ft(this,'Mushrooms','Wild-caught or store-bought non-toxic mushrooms are a natural red-foot food. High in nutrients. Only offer varieties you can positively identify as safe.')">Mushrooms<div class="fsub">Occasional</div></div>
-      <div class="fp fp-sometimes" onclick="ft(this,'Watermelon','Very high water content — great for hydration. Remove seeds. High sugar so offer as a treat only. Most tortoises love the red flesh.')">Watermelon<div class="fsub">Hydrating treat</div></div>
-    </div>
-    <p class="section-label" style="color:#e07060;">🚫 Never feed these — tap to see why</p>
-    <div class="food-grid">
-      <div class="fp fp-no" onclick="ft(this,'Spinach','Contains high oxalates which bind calcium and prevent absorption — even when you\'re supplementing. Regular feeding causes MBD even with good UVB.')">Spinach<div class="fsub">Oxalates</div></div>
-      <div class="fp fp-no" onclick="ft(this,'Citrus','Too acidic for a tortoise\'s digestive system. Causes stomach upset and diarrhea. Includes oranges, lemons, limes, and grapefruit.')">Citrus<div class="fsub">Too acidic</div></div>
-      <div class="fp fp-no" onclick="ft(this,'Dog or cat food','Way too high in protein, fat, and artificial additives. Regular feeding causes kidney damage and gout. Not worth any risk.')">Dog/cat food<div class="fsub">Kidney damage</div></div>
-      <div class="fp fp-no" onclick="ft(this,'Iceberg lettuce','Almost zero nutritional value — mostly water. Won\'t harm Slim but wastes feeding opportunities. Use real greens instead.')">Iceberg lettuce<div class="fsub">No nutrition</div></div>
-      <div class="fp fp-no" onclick="ft(this,'Avocado','Toxic to many reptiles due to persin, a fungicidal toxin. Keep away from Slim entirely.')">Avocado<div class="fsub">Toxic</div></div>
-      <div class="fp fp-no" onclick="ft(this,'Rhubarb','Very high in oxalic acid — toxic in any meaningful quantity. Avoid entirely.')">Rhubarb<div class="fsub">Toxic</div></div>
-    </div>
-    <div class="two-col" style="margin-top:13px;">
-      <div class="card">
-        <div class="card-header"><div class="card-icon ia">🧂</div><div class="card-title">Supplements</div></div>
-        <p><strong>Calcium carbonate</strong> — dust food lightly 3×/week. <strong>Multivitamin with D3</strong> — once per week. If UVB is excellent, skip extra D3 to avoid toxicity.</p>
+      <div class="card-header">
+        <div class="card-icon il">🌿</div>
+        <div class="card-title">Diet overview</div>
       </div>
-      <div class="card">
-        <div class="card-header"><div class="card-icon ib">💧</div><div class="card-title">Hydration</div></div>
-        <p>Shallow water dish always available — no deeper than Slim's chin. <strong>Soak 15–20 min, 3×/week</strong> in warm water. Soaking is one of the best things you can do for a hatchling.</p>
+      <p>Red-foots are omnivores from tropical forests. Aim for <strong>~70% leafy greens & veggies</strong>, <strong>~20% fruits</strong>, <strong>~10% protein</strong>. Tap any food to learn more.</p>
+    </div>
+
+    <p class="food-section-label">✅ Staple foods</p>
+    <div class="food-list">
+      <div class="food-row food-yes" onclick="toggleFood(this)">
+        <div class="food-row-main"><span class="food-name">Collard greens</span><span class="food-badge badge-yes">Staple</span></div>
+        <div class="food-detail">High calcium, low oxalates — one of the best greens for tortoises. Offer several times a week.</div>
+      </div>
+      <div class="food-row food-yes" onclick="toggleFood(this)">
+        <div class="food-row-main"><span class="food-name">Mustard greens</span><span class="food-badge badge-yes">Staple</span></div>
+        <div class="food-detail">Great nutritional variety with a slightly spicy flavour red-foots enjoy. Rotate with collards.</div>
+      </div>
+      <div class="food-row food-yes" onclick="toggleFood(this)">
+        <div class="food-row-main"><span class="food-name">Dandelion greens</span><span class="food-badge badge-yes">Staple</span></div>
+        <div class="food-detail">Leaves and flowers both safe. High in calcium and vitamins. Easy to find or grow yourself.</div>
+      </div>
+      <div class="food-row food-yes" onclick="toggleFood(this)">
+        <div class="food-row-main"><span class="food-name">Turnip greens</span><span class="food-badge badge-yes">Staple</span></div>
+        <div class="food-detail">Excellent calcium source. Mix in regularly for variety alongside other staple greens.</div>
+      </div>
+      <div class="food-row food-yes" onclick="toggleFood(this)">
+        <div class="food-row-main"><span class="food-name">Butternut squash</span><span class="food-badge badge-yes">Great</span></div>
+        <div class="food-detail">Rich in beta-carotene which supports immune health and vibrant scale color. Serve raw, diced small.</div>
+      </div>
+      <div class="food-row food-yes" onclick="toggleFood(this)">
+        <div class="food-row-main"><span class="food-name">Hibiscus flowers</span><span class="food-badge badge-yes">Loves them</span></div>
+        <div class="food-detail">A red-foot favorite. Flowers, leaves, and stems are all safe. Great enrichment and nutrition boost.</div>
       </div>
     </div>
-    <div class="alert alert-l">🌿 Buy a variety of greens weekly and rotate. A tortoise eating the same thing daily misses key micronutrients — variety is the most important feeding principle.</div>
+
+    <p class="food-section-label">⚠️ Treats & occasional</p>
+    <div class="food-list">
+      <div class="food-row food-sometimes" onclick="toggleFood(this)">
+        <div class="food-row-main"><span class="food-name">Strawberries</span><span class="food-badge badge-sometimes">2× per week</span></div>
+        <div class="food-detail">High in sugar — treat only. Red-foots are attracted to red foods so this doubles as enrichment.</div>
+      </div>
+      <div class="food-row food-sometimes" onclick="toggleFood(this)">
+        <div class="food-row-main"><span class="food-name">Mango</span><span class="food-badge badge-sometimes">2× per week</span></div>
+        <div class="food-detail">High sugar content so keep it occasional. Good source of vitamin A. Remove skin and pit.</div>
+      </div>
+      <div class="food-row food-sometimes" onclick="toggleFood(this)">
+        <div class="food-row-main"><span class="food-name">Earthworms</span><span class="food-badge badge-sometimes">Protein 1×/wk</span></div>
+        <div class="food-detail">Excellent protein source. Use live or frozen/thawed. Avoid worms from pesticide-treated soil.</div>
+      </div>
+    </div>
+
+    <p class="food-section-label">🚫 Avoid entirely</p>
+    <div class="food-list">
+      <div class="food-row food-no" onclick="toggleFood(this)">
+        <div class="food-row-main"><span class="food-name">Spinach</span><span class="food-badge badge-no">Avoid</span></div>
+        <div class="food-detail">High in oxalic acid which binds calcium and blocks absorption. Can cause kidney stones over time.</div>
+      </div>
+      <div class="food-row food-no" onclick="toggleFood(this)">
+        <div class="food-row-main"><span class="food-name">Citrus fruits</span><span class="food-badge badge-no">Avoid</span></div>
+        <div class="food-detail">Too acidic for their digestive system. Can cause gut irritation and discomfort.</div>
+      </div>
+      <div class="food-row food-no" onclick="toggleFood(this)">
+        <div class="food-row-main"><span class="food-name">Dog or cat food</span><span class="food-badge badge-no">Avoid</span></div>
+        <div class="food-detail">Too high in protein and fat. Can cause kidney damage and liver stress over time.</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:12px;">
+      <div class="card-header">
+        <div class="card-icon ia">🧂</div>
+        <div class="card-title">Supplements</div>
+      </div>
+      <p>Dust food with <strong>calcium carbonate 3×/week</strong>. Add a <strong>multivitamin with D3 once a week</strong>. If UVB lighting is strong, you can skip the D3 in the multivitamin.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon ib">💧</div>
+        <div class="card-title">Soaking Slim</div>
+      </div>
+      <p>Soak <strong>3× per week</strong> — critical at this age for hydration and digestion.</p>
+      <div style="margin-top:12px;background:var(--bg3);border-radius:12px;padding:14px;">
+        <div class="sched-item" style="border-bottom:1px solid var(--border);padding-bottom:10px;">
+          <span class="sched-time" style="width:28px;flex-shrink:0;">1.</span>
+          <span class="sched-desc">Fill a shallow dish with about <strong>3 cups of warm water</strong> — microwaved ~45 seconds. Test with your wrist: warm bath, not hot.</span>
+        </div>
+        <div class="sched-item" style="border-bottom:1px solid var(--border);padding-bottom:10px;">
+          <span class="sched-time" style="width:28px;flex-shrink:0;">2.</span>
+          <span class="sched-desc">Water depth should reach <strong>no higher than Slim's chin</strong> — he shouldn't have to strain to breathe.</span>
+        </div>
+        <div class="sched-item" style="border-bottom:1px solid var(--border);padding-bottom:10px;">
+          <span class="sched-time" style="width:28px;flex-shrink:0;">3.</span>
+          <span class="sched-desc">Soak for <strong>15–20 minutes</strong>. He may drink, poop, or just chill — all normal.</span>
+        </div>
+        <div class="sched-item" style="padding-bottom:0;margin-bottom:0;">
+          <span class="sched-time" style="width:28px;flex-shrink:0;">4.</span>
+          <span class="sched-desc">Gently pat dry and return to enclosure. <strong>Never leave Slim unattended</strong> during soaking.</span>
+        </div>
+      </div>
+      <div class="alert alert-a" style="margin-top:10px;margin-bottom:0;">🐢 It's totally normal for Slim to poop during a soak — warm water stimulates digestion. Change the water if he does.</div>
+    </div>
   </div>
 
-  <!-- HEALTH -->
+    <!-- HEALTH -->
   <div class="panel" id="p2">
     <div class="card">
       <div class="card-header"><div class="card-icon il">✅</div><div class="card-title">Signs Slim is thriving</div></div>
@@ -275,19 +392,17 @@ hr{border:none;border-top:1px solid var(--border);margin:13px 0;}
     <div class="alert alert-l">🩺 Find a <strong>reptile-specialist vet</strong> now — before you need one. Search "exotic vet Vancouver WA" or "reptile vet Portland." Most general vets lack tortoise experience.</div>
     <div class="card">
       <div class="card-header"><div class="card-icon ia">📖</div><div class="card-title">Conditions explained</div></div>
-      <p><strong>MBD</strong> — caused by calcium/D3 deficiency. Prevented entirely with strong UVB lighting and consistent calcium supplementation. One of the most common and most preventable tortoise conditions.</p>
-      <p><strong>Respiratory infections</strong> — caused by cold drafts, incorrect temps, or chronic low humidity. URIs need antibiotic treatment from a vet. Prevention is maintaining a stable warm environment.</p>
+      <p><strong>MBD</strong> — caused by calcium/D3 deficiency. Prevented entirely with strong UVB lighting and consistent calcium supplementation.</p>
+      <p><strong>Respiratory infections</strong> — caused by cold drafts, incorrect temps, or chronic low humidity. URIs need antibiotic treatment from a vet.</p>
       <p><strong>Shell rot</strong> — bacterial or fungal shell infection from wet or dirty substrate. Keep enclosure clean and substrate damp but never waterlogged.</p>
-      <p><strong>Parasites</strong> — internal parasites are very common, especially in new animals. Get a fecal exam done within the first few months of ownership. Easily treated once identified.</p>
-      <p><strong>Pyramiding</strong> — not a disease, but a permanent shell deformity from low humidity during growth. Prevented entirely by keeping humidity at 75–80% from hatchling stage onward.</p>
+      <p><strong>Parasites</strong> — very common in new animals. Get a fecal exam done within the first few months. Easily treated once identified.</p>
+      <p><strong>Pyramiding</strong> — permanent shell deformity from low humidity during growth. Prevented entirely by keeping humidity at 75–80% from hatchling stage onward.</p>
     </div>
     <div class="alert alert-a">🐢 Slim's first year is the most critical period of his life. Stable temps, high humidity, daily feeding, and regular soaking are your four main tools right now.</div>
   </div>
 
   <!-- SCHEDULE -->
   <div class="panel" id="p3">
-
-    <!-- Date bar -->
     <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:13px 16px;margin-bottom:11px;display:flex;align-items:center;justify-content:space-between;">
       <div>
         <div style="font-family:'Lora',serif;font-size:18px;font-weight:600;color:var(--cream);" id="sched-date">-</div>
@@ -298,8 +413,6 @@ hr{border:none;border-top:1px solid var(--border);margin:13px 0;}
         <div style="font-size:11px;color:var(--text-dim);margin-top:2px;" id="sched-age">-</div>
       </div>
     </div>
-
-    <!-- Daily checklist -->
     <div class="card">
       <div class="card-header">
         <div class="card-icon il">✅</div>
@@ -308,8 +421,6 @@ hr{border:none;border-top:1px solid var(--border);margin:13px 0;}
       </div>
       <div id="daily-list"></div>
     </div>
-
-    <!-- Daily routine times - dynamically highlighted by time of day -->
     <div class="card">
       <div class="card-header"><div class="card-icon ia">☀️</div><div class="card-title">Daily routine</div></div>
       <div id="routine-list">
@@ -343,18 +454,15 @@ hr{border:none;border-top:1px solid var(--border);margin:13px 0;}
         </div>
       </div>
     </div>
-
-    <!-- Non-daily reference -->
     <div class="card">
-      <div class="card-header"><div class="card-icon ia">📋</div><div class="card-title">Other tasks - for reference</div></div>
-      <p style="font-size:12px;color:var(--text-dim);margin-bottom:10px;">Not tracked - just a reminder list.</p>
-      <div class="sched-item"><span class="sched-time" style="color:var(--text-muted);width:80px;">2-3x/week</span><span class="sched-desc">Soak Slim 15-20 min in warm shallow water</span></div>
+      <div class="card-header"><div class="card-icon ia">📋</div><div class="card-title">Other tasks</div></div>
+      <p style="font-size:12px;color:var(--text-dim);margin-bottom:10px;">Not tracked — just a reminder list.</p>
+      <div class="sched-item"><span class="sched-time" style="color:var(--text-muted);width:80px;">2-3x/week</span><span class="sched-desc">Soak Slim 15–20 min in warm shallow water</span></div>
       <div class="sched-item"><span class="sched-time" style="color:var(--text-muted);width:80px;">Weekly</span><span class="sched-desc">Weigh Slim on a kitchen scale and note it down</span></div>
       <div class="sched-item"><span class="sched-time" style="color:var(--text-muted);width:80px;">Monthly</span><span class="sched-desc">Deep-clean enclosure and refresh substrate</span></div>
-      <div class="sched-item"><span class="sched-time" style="color:var(--text-muted);width:80px;">6-12 mo</span><span class="sched-desc">Replace UVB bulb even if still lit</span></div>
+      <div class="sched-item"><span class="sched-time" style="color:var(--text-muted);width:80px;">6–12 mo</span><span class="sched-desc">Replace UVB bulb even if still lit</span></div>
       <div class="sched-item" style="border-bottom:none;"><span class="sched-time" style="color:var(--text-muted);width:80px;">Yearly</span><span class="sched-desc">Vet check + fecal parasite test</span></div>
     </div>
-
   </div>
 
   <!-- GROWTH -->
@@ -386,10 +494,10 @@ hr{border:none;border-top:1px solid var(--border);margin:13px 0;}
     </div>
     <div class="card">
       <div class="card-header"><div class="card-icon il">⚖️</div><div class="card-title">Weekly weight tracking</div></div>
-      <p>Weigh Slim weekly on a kitchen scale and log the number. Steady gains — even slow ones — are a great sign. Weight loss over 2+ consecutive weeks is a red flag. Flat weight for 3+ weeks in a hatchling means checking temps, humidity, and food variety.</p>
+      <p>Weigh Slim weekly on a kitchen scale and log the number. Steady gains — even slow ones — are a great sign. Weight loss over 2+ consecutive weeks is a red flag.</p>
       <hr>
       <p><strong>Rough weight milestones:</strong></p>
-      <p>At birth: ~20–40g. By 6 months: ~60–100g. By 1 year: ~100–180g. These are rough guides — individual variation is totally normal.</p>
+      <p>At birth: ~20–40g &nbsp;·&nbsp; 6 months: ~60–100g &nbsp;·&nbsp; 1 year: ~100–180g. Individual variation is totally normal. <strong>Slim's first recorded weight: 106g (Mar 2026).</strong></p>
     </div>
     <div class="card">
       <div class="card-header"><div class="card-icon ia">🏡</div><div class="card-title">Enclosure upgrade roadmap</div></div>
@@ -401,13 +509,11 @@ hr{border:none;border-top:1px solid var(--border);margin:13px 0;}
         <li><div class="dot dot-ok"></div><strong>Summer:</strong> outdoor pen when temps stay above 70°F</li>
       </ul>
     </div>
-    <div class="alert alert-a">🌞 Outdoor time in a secure pen during Vancouver summers is hugely beneficial. Natural UVB, fresh air, and real foraging behavior. Just make sure it's escape-proof and predator-proof.</div>
+    <div class="alert alert-a">🌞 Outdoor time in a secure pen during Vancouver summers is hugely beneficial. Natural UVB, fresh air, and real foraging behavior. Make sure it's escape-proof and predator-proof.</div>
   </div>
 
-  <!-- SLIM'S PERSONALITY -->
+  <!-- SLIM -->
   <div class="panel" id="p5">
-
-    <!-- Hero identity block -->
     <div style="background:linear-gradient(135deg,rgba(200,125,26,0.12),rgba(192,64,32,0.07));border:1px solid rgba(200,125,26,0.2);border-radius:var(--r);padding:18px;margin-bottom:11px;">
       <div style="display:flex;align-items:center;gap:14px;margin-bottom:12px;">
         <div style="font-size:44px;filter:drop-shadow(0 3px 10px rgba(200,125,26,0.4));">🐢</div>
@@ -419,8 +525,6 @@ hr{border:none;border-top:1px solid var(--border);margin:13px 0;}
       </div>
       <p style="font-size:13.5px;color:var(--text-muted);line-height:1.65;">Red-footed tortoises are widely regarded as the most <strong>personable and social</strong> tortoise species kept as pets. Unlike most reptiles, they appear to genuinely enjoy interaction — Slim will likely learn to recognize you by sight and scent over the coming months.</p>
     </div>
-
-    <!-- Horizontal scrolling species stats -->
     <p class="section-label">Species profile</p>
     <div style="display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:4px;margin-bottom:11px;">
       <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;flex-shrink:0;min-width:120px;">
@@ -434,9 +538,9 @@ hr{border:none;border-top:1px solid var(--border);margin:13px 0;}
         <div style="font-size:11px;color:var(--text-dim);margin-top:2px;">Edge &amp; grassland too</div>
       </div>
       <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;flex-shrink:0;min-width:120px;">
-        <div style="font-size:11px;color:var(--text-dim);margin-bottom:4px;">Activity pattern</div>
+        <div style="font-size:11px;color:var(--text-dim);margin-bottom:4px;">Activity</div>
         <div style="font-size:13px;font-weight:500;color:var(--text);">Diurnal</div>
-        <div style="font-size:11px;color:var(--text-dim);margin-top:2px;">Active by day, rests at night</div>
+        <div style="font-size:11px;color:var(--text-dim);margin-top:2px;">Active by day</div>
       </div>
       <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;flex-shrink:0;min-width:120px;">
         <div style="font-size:11px;color:var(--text-dim);margin-bottom:4px;">Wild diet</div>
@@ -454,19 +558,14 @@ hr{border:none;border-top:1px solid var(--border);margin:13px 0;}
         <div style="font-size:11px;color:var(--text-dim);margin-top:2px;">Active year-round</div>
       </div>
     </div>
-
-    <!-- Behaviour & cognition -->
     <div class="card">
       <div class="card-header"><div class="card-icon ia">🧠</div><div class="card-title">Behaviour &amp; cognition</div></div>
-      <p>Research on tortoise cognition has consistently surprised scientists. Red-foots in particular demonstrate <strong>spatial memory</strong>, object recognition, and basic problem-solving — capabilities long assumed absent in reptiles. A 2014 study found red-footed tortoises could solve food-access puzzles and retain the solution months later.</p>
-      <p>They also show <strong>social learning</strong>: tortoises that observed a trained individual solving a task were able to replicate it — even though tortoises aren't considered social animals. This challenges the long-held idea that only mammals and birds are capable of learning from observation.</p>
+      <p>Research on tortoise cognition has consistently surprised scientists. Red-foots demonstrate <strong>spatial memory</strong>, object recognition, and basic problem-solving. A 2014 study found they could solve food-access puzzles and retain the solution months later.</p>
+      <p>They also show <strong>social learning</strong> — tortoises that observed a trained individual solving a task were able to replicate it, challenging the long-held idea that only mammals and birds learn from observation.</p>
     </div>
-
-    <!-- Communication -->
     <div class="card">
       <div class="card-header"><div class="card-icon ia">🗣️</div><div class="card-title">How Slim communicates</div></div>
-      <p>Red-foots have a surprisingly nuanced set of signals once you know what to look for:</p>
-      <div style="margin-top:10px;display:flex;flex-direction:column;gap:0;">
+      <div style="margin-top:4px;">
         <div class="sched-item"><span style="font-size:15px;width:28px;flex-shrink:0;">🐢</span><span class="sched-desc"><strong>Slow head bobs</strong> — curiosity or social acknowledgment. A good sign, especially toward you.</span></div>
         <div class="sched-item"><span style="font-size:15px;width:28px;flex-shrink:0;">🫸</span><span class="sched-desc"><strong>Rapid head shake</strong> — mild irritation or overstimulation. Give Slim some space.</span></div>
         <div class="sched-item"><span style="font-size:15px;width:28px;flex-shrink:0;">🫁</span><span class="sched-desc"><strong>Hissing</strong> — startled or stressed. Usually just air expelled when retreating into the shell.</span></div>
@@ -474,23 +573,10 @@ hr{border:none;border-top:1px solid var(--border);margin:13px 0;}
         <div class="sched-item" style="border-bottom:none;"><span style="font-size:15px;width:28px;flex-shrink:0;">🙈</span><span class="sched-desc"><strong>Retreating into shell</strong> — feels unsafe. Minimize handling until Slim is more settled in.</span></div>
       </div>
     </div>
-
-    <!-- Wild life -->
     <div class="card">
-      <div class="card-header"><div class="card-icon il">🌴</div><div class="card-title">Life in the wild</div></div>
-      <p>In South American tropical forests, red-foots occupy a unique ecological niche as <strong>mid-level omnivores</strong>. They play an important role in seed dispersal — swallowing whole fruits and depositing seeds far from the parent plant.</p>
-      <p>Wild red-foots have been tracked with home ranges of <strong>up to 25 acres</strong> in some studies, moving considerably more than most people assume. They follow seasonal fruiting patterns, knowing which trees produce fruit at which times of year — a form of long-term spatial memory that takes years to develop.</p>
-      <p>They are also <strong>surprisingly good climbers</strong> for a heavy-bodied animal, occasionally scaling logs and low embankments. Slim will likely try to climb anything interesting in his enclosure.</p>
+      <div class="card-header"><div class="card-icon ir">🟠</div><div class="card-title">The red scales</div></div>
+      <p>The vivid red and orange scales are the species' namesake — and a direct window into health. The colour comes from <strong>carotenoid pigments</strong> absorbed from food. A varied diet = bright saturated colours. <strong>Vibrant orange = good diet.</strong></p>
     </div>
-
-    <!-- The colours -->
-    <div class="card">
-      <div class="card-header"><div class="card-icon ir">🟠</div><div class="card-title">The red scales — what they mean</div></div>
-      <p>The vivid red and orange scales on Slim's feet and head are the species' namesake — and they're a direct window into his health. The colour comes from <strong>carotenoid pigments</strong> absorbed from food, the same compounds responsible for the colour of flamingos, salmon, and autumn leaves.</p>
-      <p>A tortoise eating a varied, nutrient-rich diet will develop bright, saturated colours. A poorly-fed tortoise fades. This makes Slim's scale colour one of the most visible health indicators you have — <strong>vibrant orange = good diet</strong>.</p>
-    </div>
-
-    <!-- Handling -->
     <div class="two-col">
       <div class="card">
         <div class="card-header"><div class="card-icon il">🤲</div><div class="card-title">Handling</div></div>
@@ -501,15 +587,18 @@ hr{border:none;border-top:1px solid var(--border);margin:13px 0;}
         <p>Naturally solitary. Can coexist with same species but watch for competition. Never house two males together.</p>
       </div>
     </div>
-
     <div class="alert alert-l">❤️ Slim may outlive most pets — and possibly some of his owners. He is a lifelong commitment worth planning for carefully, including naming a future caretaker.</div>
-
   </div>
+
+</div>
+
+<div class="version-bar">slims-site · <span id="ver-label">v1.0</span> · Mar 2026</div>
 
 <div id="overlay" onclick="closeTip()"></div>
 <div id="ftip"><span id="ftip-body"></span><span class="tc" onclick="closeTip()">tap to close</span></div>
 
 <script>
+function toggleFood(el){el.classList.toggle('open');}
 const panels=document.querySelectorAll('.panel');
 const btns=document.querySelectorAll('.nav-btn');
 const dots=document.querySelectorAll('#dn span');
@@ -541,9 +630,8 @@ function showTipAt(text,refEl){
   const tw=250;
   if(left+tw>window.innerWidth-8)left=window.innerWidth-tw-8;
   if(left<8)left=8;
-  const vh=window.innerHeight;
   const tipH=140;
-  if(r.bottom+tipH>vh)top=r.top+window.scrollY-tipH-8;
+  if(r.bottom+tipH>window.innerHeight)top=r.top+window.scrollY-tipH-8;
   tip.style.top=top+'px';
   tip.style.left=left+'px';
   tip.style.maxWidth=tw+'px';
@@ -581,124 +669,149 @@ setTimeout(()=>{
   .forEach((f,i)=>setTimeout(()=>{const e=document.getElementById(f.id);if(e)e.style.width=f.w;},i*130));
 },400);
 
-// -- SCHEDULE: simple daily checklist --
-
-const SLIM_BORN = new Date('2025-12-20');
-
-const DAILY_TASKS = [
-  {id:'feed',  label:'Feed Slim',            emoji:'🥬'},
-  {id:'mist',  label:'Mist substrate',       emoji:'💧'},
-  {id:'water', label:'Check water dish',     emoji:'🪴'},
-  {id:'temp',  label:'Check temp & humidity',emoji:'🌡️'},
-  {id:'obs',   label:'Observe Slim',         emoji:'🐢'},
+// Schedule
+const SLIM_BORN=new Date('2025-12-20');
+const DAILY_TASKS=[
+  {id:'feed',label:'Feed Slim',emoji:'🥬'},
+  {id:'mist',label:'Mist substrate',emoji:'💧'},
+  {id:'water',label:'Check water dish',emoji:'🪴'},
+  {id:'temp',label:'Check temp & humidity',emoji:'🌡️'},
+  {id:'obs',label:'Observe Slim',emoji:'🐢'},
 ];
 
-function todayKey() {
-  return 'slim_daily_' + new Date().toISOString().split('T')[0];
-}
-function loadChecked() {
-  try { return JSON.parse(localStorage.getItem(todayKey()) || '[]'); } catch(e) { return []; }
-}
-function saveChecked(arr) {
-  try { localStorage.setItem(todayKey(), JSON.stringify(arr)); } catch(e) {}
-}
+function todayKey(){return 'slim_daily_'+new Date().toISOString().split('T')[0];}
+function loadChecked(){try{return JSON.parse(localStorage.getItem(todayKey())||'[]');}catch(e){return[];}}
+function saveChecked(arr){try{localStorage.setItem(todayKey(),JSON.stringify(arr));}catch(e){}}
 
-function renderChecklist() {
-  const checked = loadChecked();
-  const container = document.getElementById('daily-list');
-  if (!container) return;
-  const allDone = checked.length === DAILY_TASKS.length;
-  let html = DAILY_TASKS.map(t => {
-    const done = checked.includes(t.id);
-    const circle = done
-      ? '<div style="width:28px;height:28px;border-radius:50%;border:2px solid #4a7c3f;background:rgba(74,124,63,0.25);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;color:#7ab56d;">&#10003;</div>'
-      : '<div style="width:28px;height:28px;border-radius:50%;border:2px solid rgba(255,255,255,0.2);background:transparent;flex-shrink:0;"></div>';
-    const label = '<span style="font-size:14px;font-weight:500;color:' + (done ? 'var(--text-dim)' : 'var(--text)') + ';text-decoration:' + (done ? 'line-through' : 'none') + ';flex:1;">' + t.label + '</span>';
-    return '<div onclick="toggleTask(\'' + t.id + '\')" style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);cursor:pointer;">' + circle + '<span style="font-size:15px;">' + t.emoji + '</span>' + label + '</div>';
+function renderChecklist(){
+  const checked=loadChecked();
+  const container=document.getElementById('daily-list');
+  if(!container)return;
+  let html=DAILY_TASKS.map(t=>{
+    const done=checked.includes(t.id);
+    const circle=done
+      ?'<div style="width:28px;height:28px;border-radius:50%;border:2px solid #4a7c3f;background:rgba(74,124,63,0.25);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;color:#7ab56d;">&#10003;</div>'
+      :'<div style="width:28px;height:28px;border-radius:50%;border:2px solid rgba(255,255,255,0.2);background:transparent;flex-shrink:0;"></div>';
+    const label='<span style="font-size:14px;font-weight:500;color:'+(done?'var(--text-dim)':'var(--text)')+';text-decoration:'+(done?'line-through':'none')+';flex:1;">'+t.label+'</span>';
+    return '<div onclick="toggleTask(\''+t.id+'\')" style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);cursor:pointer;">'+circle+'<span style="font-size:15px;">'+t.emoji+'</span>'+label+'</div>';
   }).join('');
-  if (allDone) {
-    html += '<div style="padding:12px 0 4px;text-align:center;font-size:13px;color:#7ab56d;">All done for today! Good job taking care of Slim.</div>';
-  } else {
-    html += '<div style="padding:10px 0 2px;text-align:center;font-size:11px;color:var(--text-dim);">' + checked.length + ' of ' + DAILY_TASKS.length + ' done today</div>';
-  }
-  container.innerHTML = html;
+  html+=checked.length===DAILY_TASKS.length
+    ?'<div style="padding:12px 0 4px;text-align:center;font-size:13px;color:#7ab56d;">All done for today! Good job taking care of Slim. 🐢</div>'
+    :'<div style="padding:10px 0 2px;text-align:center;font-size:11px;color:var(--text-dim);">'+checked.length+' of '+DAILY_TASKS.length+' done today</div>';
+  container.innerHTML=html;
 }
 
-function toggleTask(id) {
-  const checked = loadChecked();
-  const idx = checked.indexOf(id);
-  if (idx === -1) checked.push(id);
-  else checked.splice(idx, 1);
+function toggleTask(id){
+  const checked=loadChecked();
+  const idx=checked.indexOf(id);
+  if(idx===-1)checked.push(id);else checked.splice(idx,1);
   saveChecked(checked);
-  if (navigator.vibrate) navigator.vibrate(8);
+  if(navigator.vibrate)navigator.vibrate(8);
   renderChecklist();
 }
 
-function resetChecklist() {
-  try { localStorage.removeItem(todayKey()); } catch(e) {}
-  renderChecklist();
+function resetChecklist(){try{localStorage.removeItem(todayKey());}catch(e){}renderChecklist();}
+
+function fmtAge(born){
+  const now=new Date();
+  let months=(now.getFullYear()-born.getFullYear())*12+(now.getMonth()-born.getMonth());
+  if(now.getDate()<born.getDate())months--;
+  if(months<2){const d=Math.floor((now-born)/86400000);return d+' days old';}
+  if(months<24)return months+' mo old';
+  return Math.floor(months/12)+' yr '+(months%12)+' mo old';
 }
 
-function fmtAge(born) {
-  const now = new Date();
-  let months = (now.getFullYear() - born.getFullYear()) * 12 + (now.getMonth() - born.getMonth());
-  if (now.getDate() < born.getDate()) months--;
-  if (months < 2) { const d = Math.floor((now - born) / 86400000); return d + ' days old'; }
-  if (months < 24) return months + ' mo old';
-  return Math.floor(months/12) + ' yr ' + (months % 12) + ' mo old';
-}
-
-function currentPeriod() {
-  const h = new Date().getHours();
-  if (h >= 6  && h < 12) return 'morning';
-  if (h >= 12 && h < 15) return 'midday';
-  if (h >= 15 && h < 19) return 'afternoon';
+function currentPeriod(){
+  const h=new Date().getHours();
+  if(h>=6&&h<12)return 'morning';
+  if(h>=12&&h<15)return 'midday';
+  if(h>=15&&h<19)return 'afternoon';
   return 'evening';
 }
 
-function highlightRoutine() {
-  const period = currentPeriod();
-  document.querySelectorAll('#routine-list .sched-item').forEach(row => {
-    const isNow = row.dataset.period === period;
-    row.style.background = isNow ? 'rgba(200,125,26,0.08)' : '';
-    row.style.borderRadius = isNow ? '10px' : '';
-    row.style.marginLeft = isNow ? '-4px' : '';
-    row.style.paddingLeft = isNow ? '12px' : '';
-    row.style.borderLeft = isNow ? '3px solid var(--amber)' : '3px solid transparent';
-    const timeEl = row.querySelector('.sched-time');
-    if (timeEl) timeEl.style.color = isNow ? 'var(--amber-light)' : '';
-    // now badge
-    let badge = row.querySelector('.now-badge');
-    if (isNow && !badge) {
-      badge = document.createElement('span');
-      badge.className = 'now-badge';
-      badge.textContent = 'now';
-      badge.style.cssText = 'font-size:10px;font-weight:500;padding:2px 7px;border-radius:99px;background:rgba(200,125,26,0.25);color:var(--amber-light);margin-left:6px;vertical-align:middle;';
-      const timeEl2 = row.querySelector('.sched-time');
-      if (timeEl2) timeEl2.appendChild(badge);
-    } else if (!isNow && badge) {
-      badge.remove();
-    }
+function highlightRoutine(){
+  const period=currentPeriod();
+  document.querySelectorAll('#routine-list .sched-item').forEach(row=>{
+    const isNow=row.dataset.period===period;
+    row.style.background=isNow?'rgba(200,125,26,0.08)':'';
+    row.style.borderRadius=isNow?'10px':'';
+    row.style.marginLeft=isNow?'-4px':'';
+    row.style.paddingLeft=isNow?'12px':'';
+    row.style.borderLeft=isNow?'3px solid var(--amber)':'3px solid transparent';
+    const timeEl=row.querySelector('.sched-time');
+    if(timeEl)timeEl.style.color=isNow?'var(--amber-light)':'';
+    let badge=row.querySelector('.now-badge');
+    if(isNow&&!badge){
+      badge=document.createElement('span');
+      badge.className='now-badge';
+      badge.textContent='now';
+      badge.style.cssText='font-size:10px;font-weight:500;padding:2px 7px;border-radius:99px;background:rgba(200,125,26,0.25);color:var(--amber-light);margin-left:6px;vertical-align:middle;';
+      if(timeEl)timeEl.appendChild(badge);
+    }else if(!isNow&&badge){badge.remove();}
   });
 }
 
-function updateClock() {
-  const now = new Date();
-  const d = document.getElementById('sched-date');
-  const dy = document.getElementById('sched-day');
-  const t = document.getElementById('sched-time');
-  const a = document.getElementById('sched-age');
-  if (!d) return;
-  d.textContent = now.toLocaleDateString('en-US', {month:'long', day:'numeric', year:'numeric'});
-  dy.textContent = now.toLocaleDateString('en-US', {weekday:'long'});
-  t.textContent = now.toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'});
-  a.textContent = 'Slim: ' + fmtAge(SLIM_BORN);
+function updateClock(){
+  const now=new Date();
+  const d=document.getElementById('sched-date');
+  const dy=document.getElementById('sched-day');
+  const t=document.getElementById('sched-time');
+  const a=document.getElementById('sched-age');
+  if(!d)return;
+  d.textContent=now.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  dy.textContent=now.toLocaleDateString('en-US',{weekday:'long'});
+  t.textContent=now.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+  a.textContent='Slim: '+fmtAge(SLIM_BORN);
   highlightRoutine();
 }
 
 updateClock();
-setInterval(updateClock, 30000);
+setInterval(updateClock,30000);
 renderChecklist();
+</script>
+
+<div id="update-toast" onclick="location.reload()">🐢 New version available — tap to refresh</div>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').then(reg => {
+
+      // If a new SW is waiting, show the toast
+      function checkWaiting(r) {
+        if (r.waiting) {
+          document.getElementById('update-toast').style.display = 'block';
+        }
+      }
+
+      checkWaiting(reg);
+
+      reg.addEventListener('updatefound', () => {
+        const newWorker = reg.installing;
+        newWorker.addEventListener('statechange', () => {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            // New version ready — show toast
+            document.getElementById('update-toast').style.display = 'block';
+          }
+        });
+      });
+
+      // When user taps toast, tell SW to activate and reload
+      document.getElementById('update-toast').addEventListener('click', () => {
+        if (reg.waiting) {
+          reg.waiting.postMessage('skipWaiting');
+        }
+        location.reload();
+      });
+    });
+
+    // If SW controller changes (new SW took over), reload
+    let refreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!refreshing) { refreshing = true; location.reload(); }
+    });
+  });
+}
 </script>
 </body>
 </html>
